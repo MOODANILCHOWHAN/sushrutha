@@ -1,0 +1,37 @@
+<div class="container">
+    <img src="assets/Home/sushruta-logo-1.png" class="logo">
+    <p class="tittle">Request An Appointment</p>
+    <div class="form">
+        
+        <form #formData="ngForm"  (ngSubmit)="submit(formData.value)" class="forms">
+           <br> <input type="text" placeholder="name" id="name" name="name" ngModel class="inputs">
+           <br> <input type="email" placeholder="email" id="email" name="email" ngModel class="inputs">
+           <br><input type="number" placeholder="mobile number" id="phoneNumber" name="phoneNumber" ngModel class="inputs">
+           <br> <input type="date" placeholder="date of appointment" id="date_of_appointment" name="date_of_appointment" ngModel class="inputs">
+           <br> <input type="time" placeholder="time of appointment" id="time_of_appointment" name="time_of_appointment" ngModel class="inputs">
+           <br> <label>Please select Treatment</label>
+                <select id="treatment" name="treatment" ngModel class="inputs">
+                <option value="Select Treatment"  >Select Treatment</option>
+                <option value="IVF Treatment">IVF Treatment</option>
+                <option value="ICSI Treatment">ICSI Treatment</option>
+                <option value="IUI Treatment">IUI Treatment</option>
+                <option value="Semen Freezing">Semen Freezing</option>
+                <option value="Semen Analysis">Semen Analysis</option>
+                <option value="Male Infertility">Male Intertility</option>
+                <option value="Kidney Stone Surgery">Kidney Stone Surgery</option>
+                <option value="Andrology Surgery">Andrology Surgery</option>
+                <option value="Neurogenic Bladder">Neurogenic Bladder</option>
+                
+            </select>
+            
+            <br><label>Please select Doctor</label> 
+                <select id="doctor" name="doctor"  ngModel class="inputs">
+                <option value="Select Doctor">Select Doctor</option>
+                <option value="Dr.G.Bhargavi Reddy">Dr.G.Bhargavi Reddy</option>
+                <option value="Dr.C. Siva Shankar Reddy" >Dr.C. Siva Shankar Reddy</option>
+            </select>
+            <br><textarea placeholder="message" id="message" name="message" ngModel class="inputs"></textarea>
+             <br><button type="submit" class="inputs">submit</button>
+        </form>
+    </div>
+</div>

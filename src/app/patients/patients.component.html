@@ -1,0 +1,52 @@
+<div class="container">
+    <h1>appointments</h1>
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="mat-table">
+      <!-- Date of Appointment Column -->
+      <ng-container matColumnDef="date_of_appointment">
+        <th mat-header-cell *matHeaderCellDef>Date of Appointment</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.date_of_appointment }}</td>
+      </ng-container>
+  
+      <!-- Time Column -->
+      <ng-container matColumnDef="time_of_appointment">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.time_of_appointment }}</td>
+      </ng-container>
+  
+      <!-- Treatment Column -->
+      <ng-container matColumnDef="treatment">
+        <th mat-header-cell *matHeaderCellDef>Treatment</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.treatment }}</td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.name }}</td>
+      </ng-container>
+  
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.email }}</td>
+      </ng-container>
+  
+      <!-- Mobile Column -->
+      <ng-container matColumnDef="phoneNumber">
+        <th mat-header-cell *matHeaderCellDef>Mobile</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.phoneNumber }}</td>
+      </ng-container>
+  
+      <!-- Doctor Column -->
+      <ng-container matColumnDef="doctor">
+        <th mat-header-cell *matHeaderCellDef>Doctor</th>
+        <td mat-cell *matCellDef="let appointment">{{ appointment.doctor }}</td>
+      </ng-container>
+  
+      <!-- Row Definition -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let appointment; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
