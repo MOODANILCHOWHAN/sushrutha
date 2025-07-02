@@ -1,0 +1,38 @@
+<div>
+    <div class="header navbar text-center">
+        <!-- Latest Jobs are -->
+    </div>
+    <div>
+        <select [(ngModel)]="filter">
+            <option value="" disabled selected>Select the filter</option>
+            <option value="skill">Skill</option>
+            <option value="city">City</option>
+            <option value="remote">Remote</option>
+            <option value="industry">Industry</option>
+            <option value="company">Company</option>
+          </select>
+          <input type="text" [(ngModel)]="searchText">
+          <span class="material-symbols-outlined" (click)="applyFilter()">
+            search
+            </span>
+    </div>
+    <div>
+        @for( i of jobs ;track i){
+            <div (click)="getDetails(i)">
+                <div>
+                    <img [src]="i.image">
+                </div>
+                <div>
+                    <span>{{i.jobName}}</span>
+                    <span>{{i.company}}</span>
+                    <span>
+                        <span>{{i.experince >0 ? i.experince : 'Fresher'}}</span>
+                        @if(i.fullTime){
+                        <span>{{i.fullTime}}</span>
+                        }
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+</div>

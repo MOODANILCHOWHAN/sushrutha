@@ -14,6 +14,8 @@ import { PatientsComponent } from './patients/patients.component';
 import { MatTableModule } from '@angular/material/table';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatInputModule } from '@angular/material/input';
+import { HomeComponents } from './job/home/home.component';
+import { JobDetailsComponent } from './job/job-details/job-details.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { MatInputModule } from '@angular/material/input';
     FirstFormComponent,
     AboutComponent,
     PatientsComponent,
-    
+    HomeComponents,
+    JobDetailsComponent
   ],
   imports: [
     BrowserModule,

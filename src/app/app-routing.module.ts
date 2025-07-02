@@ -4,8 +4,9 @@ import { FirstFormComponent } from './first-form/first-form.component';
 import { HomeComponent } from './home/home.component';
 import { PatientsComponent } from './patients/patients.component';
 import { AboutComponent } from './about/about.component';
+import { HomeComponents } from './job/home/home.component';
 const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: HomeComponents },
     { path: 'home', component: HomeComponent },
     { path: 'first-form', component: FirstFormComponent },
     {path:'about',component:AboutComponent},
