@@ -16,6 +16,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatInputModule } from '@angular/material/input';
 import { HomeComponents } from './job/home/home.component';
 import { JobDetailsComponent } from './job/job-details/job-details.component';
+import { AlignItemCenterDirective } from './align-item-center.directive';
+import { JobsListComponent } from './job/jobs-list/jobs-list.component';
+
 
 @NgModule({
   declarations: [
@@ -25,7 +28,9 @@ import { JobDetailsComponent } from './job/job-details/job-details.component';
     AboutComponent,
     PatientsComponent,
     HomeComponents,
-    JobDetailsComponent
+    JobDetailsComponent,
+    AlignItemCenterDirective,
+    JobsListComponent
   ],
   imports: [
     BrowserModule,
