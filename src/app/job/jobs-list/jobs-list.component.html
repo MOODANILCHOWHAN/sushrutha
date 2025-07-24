@@ -2,22 +2,27 @@
     <h2>Job List</h2>
     <ng-container *ngIf="jobList && jobList.length > 0; else noJobs" >
         @for(i of jobList; track i){
-        <section >
-          <div>
+        <section class="col-md-12 jobs-section" >
+          <div class="col-md-6  job-detail">
             <div>
-
+              <img [src]="i.image ? i.image:'assets/Home/calendar.png'" style="width: 3rem; height: 3rem;">
             </div>
             <div>
-                <h3>{{i.jobName}}</h3>
-                <h5>{{i.company}}</h5>
+                <span class="text-bolder">{{i.jobName}}</span>
+                <br>
+                <span class="text-bold">{{i.company}}</span>
                 <div>
-                    <span>{{i.location}}</span>
-                    <span>{{i.jobType}}</span>
+                  <span class="material-symbols-outlined">location_on</span>
+                  <span>{{i.location}}</span> &nbsp;
+                  <span class="material-symbols-outlined">schedule</span>
+                  <span>{{i.jobType}}</span>
                 </div>
+                
             </div>
           </div>
-          <div>
-            <button (click)="navToDescription(i)">Apply now</button>
+          <div class="col-md-4  job-detail apply">
+            <button (click)="navToDescription(i)" class="pointer">Apply now</button>
+            
             <span>{{i.createdAt.split('T')[0]}}</span>
           </div>
         </section>

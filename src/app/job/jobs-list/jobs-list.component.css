@@ -1,0 +1,43 @@
+.jobs-section{
+    padding: 0.5rem;
+    border: 0.25px solid black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.job-detail{
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+}
+.apply{
+    flex-direction: column;
+    row-gap: 0.4rem;
+}
+.apply button{
+    background-color: #00B074;
+    width: max-content;
+    border: none;
+    border-radius: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    transition: .5s;
+}
+.text-bolder{
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+.text-bold{
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+@media(max-width:500px) {
+    .apply button{
+        /* width:3rem; */
+        padding: 0.2rem 0.4rem;
+        
+    }
+}
