@@ -9,23 +9,28 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class JobDetailsComponent implements OnInit{
 
+  jobDetails:any;
   constructor(private http:HttpClient,private params:ActivatedRoute){
    
   }
 
   ngOnInit(): void {
-    
+    this.readParams();
   }
-  readParams(){
+
+  readParams() {
     this.params.paramMap.subscribe({
-      next:(res)=>{
-        console.log(res);
-        this.getDetails(res)
-      },error:(err)=>{
-        console.log(err)
+      next: (res) => {
+        const id = res.get('id'); // ✅ use .get('id') to retrieve the value
+        console.log('ID:', id);
+        this.getDetails(id); // pass the actual string ID
+      },
+      error: (err) => {
+        console.log('Error:', err);
       }
-    })
+    });
   }
+  
   readQueryParams(){
     this.params.queryParams.subscribe({
       next:(res)=>{
@@ -37,10 +42,11 @@ export class JobDetailsComponent implements OnInit{
     })
   }
   getDetails(filter:any){
-    const api=`www.com${filter}`
+    const api=`https://jobs-ut20.onrender.com/getAllJobs/${filter}`
     this.http.get<any>(api).subscribe({
       next:(res)=>{
-        console.log(res)
+        console.log(res);
+        this.jobDetails=res;
       },error:(err)=>{
         console.log(err)
       }

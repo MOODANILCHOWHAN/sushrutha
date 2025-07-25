@@ -1,9 +1,10 @@
 <div class="col-12">
     <h2>Job List</h2>
-    <ng-container *ngIf="jobList && jobList.length > 0; else noJobs" >
+    <ng-container *ngIf="jobList && jobList.length > 0; else noJobs"  >
+      <div class=" col-12 jobs-group">
         @for(i of jobList; track i){
-        <section class="col-md-12 jobs-section" >
-          <div class="col-md-6  job-detail">
+        <section class="col-11 jobs-section" >
+          <div class="col-9  job-detail">
             <div>
               <img [src]="i.image ? i.image:'assets/Home/calendar.png'" style="width: 3rem; height: 3rem;">
             </div>
@@ -11,22 +12,24 @@
                 <span class="text-bolder">{{i.jobName}}</span>
                 <br>
                 <span class="text-bold">{{i.company}}</span>
-                <div>
-                  <span class="material-symbols-outlined">location_on</span>
+                <br>
+                <div class="d-flex align-items-center gap-1">
+                  <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">location_on</span>
                   <span>{{i.location}}</span> &nbsp;
-                  <span class="material-symbols-outlined">schedule</span>
+                  <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">schedule</span>
                   <span>{{i.jobType}}</span>
                 </div>
                 
             </div>
           </div>
-          <div class="col-md-4  job-detail apply">
+          <div class=" job-detail apply">
             <button (click)="navToDescription(i)" class="pointer">Apply now</button>
             
-            <span>{{i.createdAt.split('T')[0]}}</span>
+            <span>{{i.createdAt | daysAgo}}</span>
           </div>
         </section>
         }
+      </div>
     </ng-container>
     <ng-template #noJobs>
         <p>No jobs found.</p>
