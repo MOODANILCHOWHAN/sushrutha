@@ -1,2 +1,58 @@
-<p>job-details works!</p>
-<p>{{jobDetails }}</p>
+<div>
+    <div class="col-11  job-detail">
+        <div>
+          <img [src]="jobDetails.image ? jobDetails.image:'assets/Home/calendar.png'" style="width: 4rem; height: 4rem;">
+        </div>
+        <div>
+            <span class="text-bolder">{{jobDetails.jobName}}</span>
+            <br>
+            <span class="text-bold">{{jobDetails.company}}</span>
+            <br>
+            <div class="details">
+                <div class="d-flex align-items-center gap-1">
+                  <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">location_on</span>
+                  <span>{{jobDetails.city}}</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">schedule</span>
+                  <span>{{jobDetails.jobType}}</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">work_history</span>
+                  <span>{{jobDetails.jobExperience < 2 ? 'Fresher' : 'Experience' }}</span>
+                </div>
+              </div>
+            
+        </div>
+    </div>
+    <div>
+        <h4>Description</h4>
+        <span>
+            Experience :  {{jobDetails.jobExperience}}
+        </span>
+        <br>
+        <span>
+            {{jobDetails.description}}
+        </span>
+    </div>
+    <div>
+        @if(jobDetails.interviewType == 'Walk-In'){
+            <h4>Walk-in interview on {{jobDetails.jobDetails}}</h4>
+        }
+        @else{
+            @switch(getLinkType(jobDetails.link)) {
+                @case('email') {
+                  <h4>Share your resume by email</h4>
+                }
+                @case('mobile') {
+                  <h4>Call HR at {{ jobDetails.link }}</h4>
+                }
+                @default {
+                  <h4>Apply via Website</h4>
+                  <span>Click here</span>
+                }
+              }
+              
+        }
+    </div>
+</div>

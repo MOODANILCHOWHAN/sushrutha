@@ -42,7 +42,7 @@ export class JobDetailsComponent implements OnInit{
     })
   }
   getDetails(filter:any){
-    const api=`https://jobs-ut20.onrender.com/getAllJobs/${filter}`
+    const api=`https://jobs-ut20.onrender.com/getJob/${filter}`
     this.http.get<any>(api).subscribe({
       next:(res)=>{
         console.log(res);
@@ -52,4 +52,13 @@ export class JobDetailsComponent implements OnInit{
       }
     })
   }
+  getLinkType(link: string): 'email' | 'mobile' | 'url' {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const mobileRegex = /^[6-9]\d{9}$/;
+  
+    if (emailRegex.test(link)) return 'email';
+    if (mobileRegex.test(link)) return 'mobile';
+    return 'url';
+  }
+  
 }
