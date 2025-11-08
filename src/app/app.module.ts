@@ -19,6 +19,7 @@ import { JobDetailsComponent } from './job/job-details/job-details.component';
 import { AlignItemCenterDirective } from './align-item-center.directive';
 import { JobsListComponent } from './job/jobs-list/jobs-list.component';
 import { DaysAgoPipe } from './days-ago.pipe';
+import { JobsCardComponent } from './job/model/jobs-card/jobs-card.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { DaysAgoPipe } from './days-ago.pipe';
     JobDetailsComponent,
     AlignItemCenterDirective,
     JobsListComponent,
-    DaysAgoPipe
+    DaysAgoPipe,
+    JobsCardComponent
   ],
   imports: [
     BrowserModule,

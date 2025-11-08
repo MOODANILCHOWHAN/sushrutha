@@ -1,0 +1,37 @@
+@import "../hashtag-profile/hashtag-profile.component.scss";
+.my-overview{
+    text-align: center;
+}
+.postactusername{
+    font-size: 20px;
+    font-weight: 600;
+}
+.stickytop{
+    position: sticky !important;
+    top: 130px !important;
+}
+.stickytopleft{
+    top: -217px;
+    margin-top: 13px;
+}
+.action-btns{
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+}
+::ng-deep .ng-placeholder{
+    z-index: unset !important;
+  }
+
+  .nopostfeed{
+    padding: 15px 0;
+    text-align: center;
+    padding-top: 0px;
+    margin-left: 202px;
+    @include mQ(500px){
+        margin-left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+  }

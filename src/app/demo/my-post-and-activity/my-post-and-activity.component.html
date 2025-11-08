@@ -1,0 +1,613 @@
+<div class="wrapper">
+    <div class="container feedMasterPage">
+      <div class="row py-3">
+        <div class="col-md-3 d-none d-md-block mt-2 leftMenu">
+          <profile-detail-card [jobseekerOtherDetails]="allPosts?.otherDetailsCount" [lastUpdateddata]="allPosts?.otherDetailsCount?.profileModifiedTime"></profile-detail-card>
+        </div>
+        <div class="col-md-6 p-0 mt-2 pt-1">
+          <div class="row">
+            <div class="col-12 leftMenu">
+              <div class="card shadow-sm mb-3 shadow-none profileCard">
+                <ng-container>
+                  <div class="card-body pt-1">
+                    <div class="pt-2">
+                      <div class="d-flex justify-content-between">
+                        <div class="">
+                          <div class="group-actions">
+                          <!-- <h4 class="bold text-capitalize my-3" *ngIf="activityPosts?.fullName? true: false">Your<span class="text-lowercase">s</span> Activity</h4>
+                          <h4 class="bold text-capitalize my-3" *ngIf="activityPosts?.fullName? false: true">
+                              <div class="row">
+                                 <div class="col-md-6"><ngx-skeleton height="30px" margin="0 0 8px 0" width="125%"></ngx-skeleton></div>
+                                 <div class="col-md-6"><span class="postactusername text-lowercase">'s</span><span class="postactusername"> Activity</span></div>
+                            </div></h4> -->
+                            <!-- <p class="text-muted">87525 members</p> -->
+                          <h4 class="bold text-capitalize my-3" >Your Activity</h4>
+                            <div class="action-btns">
+                              <button [ngClass]="currentTab === 'posted' ? 'btn btn-primary mr-2 px-4' : 'btn btn-outline-primary mr-2 px-4'" 
+                              (click)="currentTab = 'posted';currentPage =1; feedItems =[];getPosts('posted');this.nofeeds = false;">Posts</button>
+                              <button [ngClass]="currentTab === 'comments' ? 'btn btn-primary mr-2 px-4' : 'btn btn-outline-primary mr-2 px-4'"
+                              (click)="currentTab = 'comments';currentPage =1; feedItems =[];getPosts('comments');this.nofeeds = false;">Comments</button>
+                              <button [ngClass]="currentTab === 'likes' ? 'btn btn-primary mr-2 px-4' : 'btn btn-outline-primary mr-2 px-4'"
+                              (click)="currentTab = 'likes';currentPage =1; feedItems =[];getPosts('likes');this.nofeeds = false;">Reactions</button>
+                              <button [ngClass]="currentTab === 'shares' ? 'btn btn-primary  mr-2 px-4' : 'btn btn-outline-primary  mr-2 px-4'"
+                              (click)="currentTab = 'shares';currentPage =1; feedItems =[];getPosts('shares');this.nofeeds = false;">Shares</button>
+                              <!-- <button class="btn btn-outline-primary mr-2 px-4">Articles</button>
+                              <button class="btn btn-outline-primary mr-2 px-4">Documents</button> -->
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <div>
+                          <button class="more-btn rounded-circle" [matMenuTriggerFor]="shareMenu">
+                            <mat-icon>more_horiz</mat-icon>
+                          </button>
+                          <mat-menu #shareMenu="matMenu">
+                            <button routerLink="/jobseeker/mynetwork/all-suggestion-tags" mat-menu-item>
+                              <mat-icon>add</mat-icon>
+                              <span>Discover new hashtags</span>
+                            </button>
+  
+                            <button mat-menu-item >
+                              <mat-icon>tune</mat-icon>
+                              <span>Manage your hashtags</span>
+                            </button>
+                          </mat-menu>
+                        </div> -->
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+  
+            </div>
+          </div>
+          
+          <div class="row rightMenu">
+  
+            <div class="col-12 mb-3" *ngIf ="(!feedItems?.length)&& isPostDataCame">
+              <div class="card no-data tc p-3">
+                <!-- <div class="my-3">
+                  <img lazyLoad="assets/img/noSearchFoundImg.png">
+                </div> -->
+                <!-- <h5><b>Currently, there are no {{ activitiesTab ? 'activities' : 'posts' }}</b></h5> -->
+                <!-- <h5><b>Currently, there are no activities</b></h5> -->
+                <no-data-found noDataFoundHeadLine="Currently, there are no activities"></no-data-found>
+              </div>
+            </div>
+            <!-- <div class="col-12 mb-3" *ngIf ="allPosts === null && activitiesTab == false">
+              <div class="card no-data tc p-3">
+                <div class="my-3">
+                  <img lazyLoad="assets/img/noSearchFoundImg.png">
+                </div>
+                <h5><b>Currently, there are no posts</b></h5>
+              </div>
+            </div> -->
+  
+            <!-- <div class="col-12 mb-3 hello" *ngIf ="activitiesTab && activityPosts?.feedItems && activityPosts?.feedItems.length >0">
+              <single-post-card *ngFor="let feedItem of activityPosts?.feedItems; let singleFeedIndex = index" 
+               (deleteTheFeed)="spliceFeedItem($event)" [presentFeedIndex]="singleFeedIndex" (feedChanged)="refreshFeed()"
+              (editTheFeed)="editFeedItem($event, template)" [feedItem]="feedItem" (shareTheFeed)="shareFeedItem($event, template)"></single-post-card>
+            </div> -->
+  
+            <div class="col-12 mb-3 hii" >
+              <single-post-card *ngFor="let feedItem of feedItems; let singleFeedIndex = index"
+              (deleteTheFeed)="spliceFeedItem($event)" (editTheFeed)="editFeedItem($event, template,singleFeedIndex)" (feedChanged)="refreshFeed()" 
+              (shareTheFeed)="shareFeedItem($event, template,singleFeedIndex)" [feedItem]="feedItem" [presentFeedIndex]="singleFeedIndex"></single-post-card>
+              <!-- Posts Starts -->
+              <!-- Posts Ends -->
+            </div>
+            <div class="mb-3 p-2" *ngIf="!isPostDataCame" style="margin-left: 35%;">
+              <all-loaders></all-loaders>
+            </div>
+            <div class="mb-3 nopostfeed" *ngIf="nofeeds && isPostDataCame">
+              <span>Your feed has reached it's end.</span>
+            </div>
+          </div>
+        </div>
+  
+  
+  
+        <!-- <div class="col-md-3">
+         <div class="right-box">
+          <h6><b>Hiring Companies</b></h6>
+          <p>Dell</p>
+          <button class="btn btn-light mt-2">See all</button>
+         </div>
+         <div class="right-box">
+          <h6><b>Trending Internships</b></h6>
+          <p>Infosys</p>
+          <button class="btn btn-light mt-2">See all</button>
+         </div>
+        </div> -->
+  
+  
+        <div class="col-md-3 mt-2 pt-1" id="mobileResponsive">
+          <div class="stickytop">
+          <div class="card mb-3" *ngIf="jobs && jobs.length >0">
+              <div class="card-body pt-1 pb-1">
+                  <p class="bold">Trending Jobs</p>
+              </div>
+              <ul class="list-group list-group-flush">
+                  <li class="border-top-0 list-group-item pb-0 pt-0" *ngFor="let item of jobs">
+                      <div class="d-flex mt-2 pt-1" (click)="navigateToJob(item)" style="cursor: pointer;">
+                          <div style="width: 45px;">
+                              <img *ngIf="(item?.imagepurity === 'CONFIRMED')" class="img-fluid rounded-circle"
+                                  [src]="snack.getJsImage(item.encodedEncodedProfilePicPath, 'assets/img/internship-default.png')" errorImage="assets/img/internship-default.png">
+                              <img *ngIf="(item?.imagepurity !== 'CONFIRMED')" class="img-fluid rounded-circle"
+                                  [src]="'assets/img/internship-default.png'" errorImage="assets/img/internship-default.png">    
+                          </div>
+                          <div class="pl-3" style="width: 173px;">
+                              <p class="bold mb-0 mt-0">{{item.jobTitle}}</p>
+                              <p class="mb-0 mt-0 small text-muted">{{item.companyName}}</p>
+                              <p class="mt-0 small text-muted">{{item.city}}, {{item.state}}</p>
+                          </div>
+                      </div>
+                  </li>
+              </ul>
+              <div class="card-body py-2 tc">
+                  <a [routerLink]="'/Trending-jobs'" class="card-link blue">View All</a>
+              </div>
+          </div>
+          <div class="card mb-3" *ngIf="companies && companies.length >0" >
+              <div class="card-body pt-1 pb-1">
+                  <p class="bold">Hiring Companies</p>
+              </div>
+              <ul class="list-group list-group-flush">
+                  <li class="border-top-0 list-group-item pb-0 pt-0" *ngFor="let item of companies">
+                      <div class="d-flex mt-2 pt-1" (click)="navigateToCompany(item)" style="cursor: pointer;">
+                          <div style="width: 45px;">
+                              <img class="img-fluid"
+                                  [lazyLoad]="snack.getJsImage(item.companyLogoPath, 'https://www.eurekalert.org/multimedia/pub/web/173586_web.jpg')"
+                                  errorImage="https://www.eurekalert.org/multimedia/pub/web/173586_web.jpg">
+                          </div>
+                          <div class="pl-3" style="width: 173px;">
+                              <p class="bold mb-0 mt-0">{{item.companyName}}</p>
+                              <p class="mb-0 mt-0 small text-muted">{{item.industries.join(', ')}}</p>
+                              <p class="mt-0 small text-muted">{{item.locations.city}}, {{item.locations.state}}</p>
+                          </div>
+                      </div>
+                  </li>
+              </ul>
+              <div class="card-body py-2 tc">
+                  <a routerLink="/explore-companies" class="card-link blue">View All</a>
+              </div>
+          </div>
+          <div class="card mb-3"  *ngIf="internships && internships.length >0" >
+              <div class="card-body pt-2 pb-0">
+                  <p class="bold">Popular Internships</p>
+              </div>
+              <ul class="list-group list-group-flush">
+                  <li class="border-top-0 list-group-item pb-0 pt-0" *ngFor="let item of internships">
+                      <div class="d-flex mt-2 pt-1" (click)="navigateToInternship(item)" style="cursor: pointer;">
+                          <div style="width: 45px;">
+                              <img class="img-fluid"
+                                  [lazyLoad]="snack.getJsImage(item.companyLogoPath, 'https://www.eurekalert.org/multimedia/pub/web/173586_web.jpg')"
+                                  errorImage="https://www.eurekalert.org/multimedia/pub/web/173586_web.jpg">
+                          </div>
+                          <div class="pl-3" style="width: 173px;">
+                              <p class="bold mb-0 mt-0">{{item.companyInternshipProgramName}}</p>
+                              <p class="mb-0 mt-0 small text-muted">{{item.industries.join(', ')}}</p>
+                              <p class="mt-0 small text-muted">{{item.city}}, {{item.state}}</p>
+                          </div>
+                      </div>
+                  </li>
+              </ul>
+              <div class="card-body py-2 tc">
+                  <a routerLink="/explore-internships" class="card-link blue">View All</a>
+              </div>
+          </div>
+  
+          <!-- <div class="card mb-3">
+              <div class="card-body pt-2 pb-0">
+                  <p class="bold">People Viewed</p>
+              </div>
+              <ul class="list-group list-group-flush">
+                  <li class="border-top-0 list-group-item pb-0 pt-0">
+                      <div class="d-flex mt-2 pt-1">
+                          <div style="width: 45px;">
+                              <img class="img-fluid rounded-circle"
+                                  src="data:image/jpeg;base64,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">
+                          </div>
+                          <div class="pl-3" style="width: 173px;">
+                              <p class="bold mb-0 mt-0">Subbu Annavaram</p>
+                              <p class="mb-0 mt-0 small text-muted">Developer at Cogent</p>
+                              <p class="mt-0 small text-muted">Hyderabad, Telangana</p>
+                          </div>
+                      </div>
+                  </li>
+                  <li class="list-group-item py-0">
+                      <div class="d-flex mt-2 pt-1">
+                          <div style="width: 45px;">
+                              <img class="img-fluid rounded-circle"
+                                  src="data:image/jpeg;base64,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">
+                          </div>
+                          <div class="pl-3" style="width: 173px;">
+                              <p class="bold mb-0 mt-0">Subbu Annavaram</p>
+                              <p class="mb-0 mt-0 small text-muted">Developer at Cogent</p>
+                              <p class="mt-0 small text-muted">Hyderabad, Telangana</p>
+                          </div>
+                      </div>
+                  </li>
+                  <li class="list-group-item py-0">
+                      <div class="d-flex mt-2 pt-1">
+                          <div style="width: 45px;">
+                              <img class="img-fluid rounded-circle"
+                                  src="data:image/jpeg;base64,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">
+                          </div>
+                          <div class="pl-3" style="width: 173px;">
+                              <p class="bold mb-0 mt-0">Subbu Annavaram</p>
+                              <p class="mb-0 mt-0 small text-muted">Developer at Cogent</p>
+                              <p class="mt-0 small text-muted">Hyderabad, Telangana</p>
+                          </div>
+                      </div>
+                  </li>
+              </ul>
+              <div class="card-body py-2 tc">
+                  <a href="#" class="card-link blue">View All</a>
+              </div>
+          </div> -->
+        </div>
+      </div>
+  
+  
+  
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #template>
+    <ng-container
+      *ngIf="{ userdata: (notifications.userdata.asObservable() | async)?.userDetailsVo} as data">
+      <div class="modal-header py-2" style="background-color: #e6f0f9;">
+        <h5 class="modal-title font-weight-bold my-1 pull-left">{{ editFeed && !shareFeed ? 'Edit Post' : !editFeed && shareFeed ? 'Share' : 'Create a Post' }}</h5>
+        <button type="button" class="close pull-right" aria-label="Close"
+          (click)="discardPost(templateNested)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex">
+          <div style="width: 60px; height: 60px;">
+            <img class="img-fluid rounded-circle img-thumbnail"
+              [lazyLoad]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+          </div>
+          <div class="align-self-center ml-3">
+            <p><b>{{data.userdata?.firstName | titlecase }} {{data.userdata?.middleName | titlecase }}
+                {{data.userdata?.lastName | titlecase }}</b></p>
+          </div>
+          <div class="ml-auto mr-2">
+            <div class="btn-group" dropdown placement="bottom left">
+              <button id="button-alignment" dropdownToggle type="button" (click)="whoCanSeePostModel(whoCanSeePostTemplate)"
+                class="btn badge badge-pill border p-2 dropdown-toggle" aria-controls="dropdown-basic">
+                <i class="fa fa-globe" aria-hidden="true"></i> {{ whoCanSeeValue === 'groups' ? feedPostSelectGroup.name : (whoCanSeeValue | titlecase) }} <span class="caret"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="">
+          <!-- <div id="createContent" [attr.contenteditable]="true" [innerHTML]="feedContent"
+            data-placeholder="What's on your mind, write here">
+         </div> -->
+  
+         <quill-editor
+         id="createContent" 
+         [modules]="quillConfig" 
+         [(ngModel)]="feedContent" 
+         placeholder="What's on your mind, write here"
+         ></quill-editor>
+  
+        </div>
+  
+        <!--File Preview-->
+        <div class="overflow-hidden rounded tc border position-relative mt-2" *ngIf="displayImage">
+          <div style="top: 10px; position: absolute; float: right; right: 10px;">
+            <!-- <button class="btn btn-sm btn-info" (click)="displayImage = null;image = null;">
+              <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+            </button> -->
+          </div>
+          <img class="img-fluid" [lazyLoad]="displayImage">
+          <div class="d-none">
+            <carousel [showIndicators]="false">
+              <slide>
+                <img lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/airplane.png" alt="first slide"
+                  style="display: block; width: 100%;">
+              </slide>
+              <slide>
+                <img lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/goldhill.png" alt="second slide"
+                  style="display: block; width: 100%;">
+              </slide>
+              <slide>
+                <img lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/boat.png" alt="third slide"
+                  style="display: block; width: 100%;">
+              </slide>
+            </carousel>
+          </div>
+          <div>
+            <div class="d-flex img-thumbnail" *ngIf="dispalyfileData">
+              <div style="width: 200px;">
+                <img class="img-fluid w-100"
+                [lazyLoad]="snack.getJsImage(dispalyfileData.encodedFileImagePaths[0], 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+                errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs">
+              </div>
+              <div class="ml-2">
+                <p class="bold">{{dispalyfile.name}}</p>
+                <p class="smallFont text-muted">{{(dispalyfile.size/1024/1024).toFixed(2)}}</p>
+              </div>
+              <div class="ml-auto">
+                <button class="btn btn-sm btn-info" (click)="deleteFeedItemForFile();dispalyfile = null;dispalyfileData">
+                  <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex d-none img-thumbnail" *ngIf="(videoUrl || videoDescription) && sanitVideoUrl">
+          <div style="width: 200px;">
+            <!-- <img class="img-thumbnail"
+              src="https://www.vidyard.com/media/video-thumbnail-1920x1080-1.jpg"> -->
+              <iframe class="img-thumbnail"
+              [src]="sanitVideoUrl ? sanitVideoUrl: 'assets/img/admin/login.jpg'"></iframe>
+          </div>
+          <div class="ml-2">
+            <p class="bold">{{videoDescription}}</p>
+            <!-- <p class="smallFont text-muted">26MB</p> -->
+          </div>
+          <!-- <div class="ml-auto"> -->
+            <!-- <button class="btn btn-sm btn-info mr-2">
+              <i class="fa fa-lg fa fa-pencil" aria-hidden="true"></i>
+            </button> -->
+            <!-- <button class="btn btn-sm btn-info" (click)="videoUrl = null;videoDescription = null;sanitVideoUrl =null">
+              <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+            </button> -->
+          <!-- </div> -->
+        </div>
+        <!--File Preview Ends-->
+  
+        <!--Share Preview Starts-->
+        <div class="bg-light border mb-3 overflow-hidden p-2 rounded" *ngIf="shareFeed" [ngStyle]="{'margin-top.px' : displayImage ? -20 : 25}">
+          <!-- <div *ngIf="displayImage" style="top: 40px; position: relative; float: right; right: 10px;">
+            <button class="btn btn-sm btn-info" (click)="displayImage = null;image = null;">
+              <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+            </button>
+          </div> -->
+          <div class="d-flex">
+            <div style="width: 60px; height: 60px" *ngIf="!shareFeed.companyDTO">
+              <img
+                class="img-fluid rounded-circle img-thumbnail 1"
+                [lazyLoad]="
+                  snack.getJsImage(
+                    shareFeed.owner.profileImgPath,
+                    'assets/img/default-user.png'
+                  )
+                "
+                errorImage="assets/img/default-user.png"
+              />
+            </div>
+            <div style="width: 60px; height: 60px;" *ngIf="shareFeed.companyDTO">
+              <img class="img-fluid rounded-circle img-thumbnail 2"
+                [lazyLoad]="snack.getJsImage(shareFeed.companyDTO.companyLogoPath, 'assets/img/internship-default.png')" errorImage="assets/img/default-user.png">
+            </div>
+            <div class="align-self-center ml-3" *ngIf="!shareFeed.companyDTO">
+              <p>
+                <b
+                  >{{ shareFeed.owner.firstName | titlecase }}
+                  {{ shareFeed.owner.middleName | titlecase }}
+                  {{ shareFeed.owner.lastName | titlecase }}</b
+                >
+              </p>
+            </div>
+            <div class="align-self-center ml-3" *ngIf="shareFeed.companyDTO">
+              <p>
+                <b>{{ shareFeed.companyDTO.companyName | titlecase }}</b>
+              </p>
+            </div>
+          </div>
+  
+          <div>
+            <p class="p-3">
+              <!-- <span *ngIf="shareFeed.postDescription" [innerHTML]="showFeedMore ? shareFeed.postDescription : (shareFeed.postDescription | slice:0:150) "></span> -->
+  
+              <ng-template [ngIf]="shareFeed.postDescription">
+                    
+                <quill-editor
+                [modules]="quillConfig"
+                readOnly="true"
+                [ngModel]="shareFeed.postDescription" 
+                placeholder=""
+                ></quill-editor>
+  
+                </ng-template>
+  
+              <span *ngFor="let tag of sharedFeedTags; let t = index" class="blue m-1 pointer" (click)="loadHashtagProfile(tag.hashTagName)"><b>{{tag.hashTagName}}</b></span>
+              <!-- <span *ngIf="(shareFeed.postDescription && shareFeed.postDescription.length > 150) && !showFeedMore"> ...</span> -->
+              <!-- <span class="blue pointer" style="cursor: pointer;"
+                  *ngIf="(shareFeed.postDescription && shareFeed.postDescription.length > 150) && !showFeedMore"
+                  (click)="showFeedMore=true">Show More
+              </span> -->
+              <span class="blue pointer" *ngIf="showFeedMore" (click)="showFeedMore=false"> Show Less</span>
+            </p>
+          </div>
+          <div class="w-100" *ngIf="shareFeed.encodedFilePath && shareFeed.fileType === 'Image'">
+            <img class="img-fluid w-100"
+              [lazyLoad]="snack.getJsImage(shareFeed.encodedFilePath, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+              errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs">
+          </div>
+          <div class="w-100" *ngIf="shareFeed.videoLink">
+            <iframe width="100%" height="100%" [src]="shareFeed.videoLink" frameborder="0" title="My summary video" class="height_250px" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+          </div>
+          <div class="w-100" *ngIf="shareFeed.encodedFileImagePaths && shareFeed.encodedFileImagePaths.length > 0">
+            <carousel [showIndicators]="false">
+              <slide *ngFor="let img of shareFeed.encodedFileImagePaths">
+                <img [lazyLoad]="snack.getJsImage(img, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')" 
+                  errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs" alt="first slide"
+                  style="display: block; width: 100%;">
+              </slide>
+            </carousel>
+          </div>     
+        </div>
+        <!--Share Preview Ends-->
+       
+        <ng-select *ngIf="displayTags" [(ngModel)]="selectedTags" (add)="addItem($event)" addTag="true" appendTo="body" bindLabel="hashTagName" (search)="getHashTagSuggetions($event.term)" [items]="tagSuggetions" placeholder="Select any hashtag" multiple="true"></ng-select>
+        <p class="blue pointer font-weight-bold py-2" (click)="displayTags = !displayTags;">Add Hashtag</p>
+        <div style="margin-bottom: 60px !important;">
+          <!-- <button mat-mini-fab class="mat-elevation-z0 mr-3" (click)="displayTags = !displayTags;"
+            style="background-color: #e6f0f9; color: #566c7a !important;">
+            <span class="material-icons">add</span>
+          </button> -->
+            <ng-container *ngIf="!editFeed && !shareFeed">
+              <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" *ngIf="!displayImage && !dispalyfile && !videoUrl"
+              (click)="file.click()"><i class="fa mr-2 fa-picture-o"
+                  aria-hidden="true"></i> Photo</button>
+              <input type="file" style="display: none;" (change)="uploadImage($event)" #file>
+              <input type="file" style="display: none;" (change)="uploadFile($event)" #filenew>
+              <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" 
+              (click)="openShareDocument(videoPreviewTemplate)" *ngIf="!displayImage && !dispalyfile && !videoUrl"><i
+                  class="fa mr-2 fa-video-camera" aria-hidden="true"></i> Video</button>
+              <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" 
+              *ngIf="!displayImage && !dispalyfile && !videoUrl" (click)="filenew.click()"><i class="fa mr-2 fa-file-text-o"
+                  aria-hidden="true"></i> Files</button>
+              <button class="btn btn-lightBlue btn-sm rounded-pill" (click)="openWhoCanCommentOptions(whoCanCommentTemplate)">
+                <span *ngIf="whoCanCommentValue == 'none'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes_off</span> No one</span>
+                <span *ngIf="whoCanCommentValue == 'anyone'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes</span> Anyone</span>
+                <span *ngIf="whoCanCommentValue == 'connection'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes</span> Connections</span>
+              </button>
+            </ng-container>
+  
+              <button *ngIf="!editFeed && !shareFeed" class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+              (click)="postFeed()">Post</button>
+              <button *ngIf="editFeed && !shareFeed" class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+              (click)="updateFeed()">Update Post</button>
+              <button *ngIf="!editFeed && shareFeed" class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+              (click)="sharePost()">Share Post</button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>
+  
+  <ng-template #templateNested>
+    <div class="modal-header py-2" style="background-color: #e6f0f9;">
+      <h5 class="modal-title font-weight-bold my-1 pull-left">Discard</h5>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to leave and discard your draft, Recheck again?</p>
+    </div>
+    <div class="modal-footer p-0 d-flex">
+      <div class="tc border-right">
+        <button class="btn btn-lg" (click)="discardModalRef.hide()" >Back</button>
+      </div>
+      <div class="tc">
+        <button class="btn btn-lg btn-link ml-2" (click)="hidePopups();" >Discard</button>
+      </div>
+    </div>
+  </ng-template>
+  
+      <!-- Who can see post Model Starts-->
+      <ng-template #whoCanSeePostTemplate>
+        <div class="popup1">
+          <div class="modal-header py-0">
+            <h5 class="m-0 modal-title pull-left py-2">Who can see your post?</h5>
+            <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="whoCanSeeValue = 'anyone';whoCanSeePostModalRef.hide()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body popupSiZe">
+            <p class="mb-3">Your post will be visible on feed in search results</p>
+            <ul>
+              <li role="menuitem" (click)="whoCanSeeValue = 'anyone'" class="my-1 border-bottom"><a class="dropdown-item" [ngStyle]="{'background-color': whoCanSeeValue == 'anyone'?'#E8E8E8':''}">
+                <span class="material-icons-outlined align-bottom mr-1">public</span>
+                <span><b>Anyone </b> <br/>Anyone on GradSiren</span>
+              </a></li>
+              <li role="menuitem" (click)="whoCanSeeValue = 'connections'" class="my-1 border-bottom"><a class="dropdown-item" [ngStyle]="{'background-color': whoCanSeeValue == 'connections'?'#E8E8E8':''}">
+                <span class="material-icons-outlined align-bottom mr-1">group</span>
+                <span><b>Connections </b><br/>Your connections only</span>
+              </a></li>
+              <li role="menuitem" (click)="userGroupsModel(userGroupsTemplate)" class="my-1">
+                <a class="dropdown-item">
+                  <span class="material-icons-outlined align-bottom mr-1">groups</span> 
+                  <span><b>Groups</b> <br/>Select a group you're in
+                    <span class="material-icons-outlined">chevron_right</span>
+                  </span>
+                </a></li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" (click)="whoCanSeeValue = 'anyone';whoCanSeePostModalRef.hide()">Back</button>
+            <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="whoCanSeePostModalRef.hide()">Save</button>
+          </div>
+        </div>
+        </ng-template>
+      <!-- Who can see post Model Ends-->
+  
+      <!-- User Groups Model Starts-->
+      <ng-template #userGroupsTemplate>
+        <div class="popup2">
+          <div class="modal-header py-0">
+            <h5 class="m-0 modal-title pull-left py-2">Select a group</h5>
+            <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="feedPostSelectGroup.id = null; feedPostSelectGroup.name = null;userGroupsModalRef.hide()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body groupPop">
+            <!-- <p class="my-2 border-bottom"><span class="material-icons-outlined align-bottom mr-1">groups</span>
+              <span><b>User Groups</b></span>
+            </p> -->
+            <p class="mt-1 mb-2">Only visible to members of this group and will appear on group's page</p>
+            <input class="form-control br-10 mb-3" placeholder="Search" [(ngModel)]="groupSearchText" (ngModelChange)="getMemberGroupsList(true)" type="text" style="border-radius: 25px !important;">
+            <ul *ngFor="let group of userGroups;let i = index;" class="pb-2">
+              <li role="menuitem" class="pointer d-flex" (click)="feedPostSelectGroup.id = group.groupId; feedPostSelectGroup.name = group.groupName" [ngStyle]="{'background-color':feedPostSelectGroup.name == group.groupName?'#E8E8E8':''}">
+                <span class="mr-1"><img class="img-fluid rounded-circle" style="width: 55px; margin-right: 10px;" [lazyLoad]="snack.getJsImage(group?.logoPath, 'assets/img/group.png')" errorImage="assets/img/group.png"></span>
+                <span class="pt-3"><b>{{ group.groupName }}</b></span>
+                <!-- <span>
+                  <mat-radio-button class="example-margin"></mat-radio-button>
+                </span> -->
+              </li>
+            </ul>
+            <div class="my-3 p-3 tc" *ngIf ='userGroups && userGroups.length == 0'>
+              <img lazyLoad="assets/img/jobseeker/noPendingPosts.png">
+              <!-- <h6 class="bold">No connections found</h6> -->
+              <h6 class="bold">No groups found</h6>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" (click)="feedPostSelectGroup.id = null; feedPostSelectGroup.name = null;userGroupsModalRef.hide()">Back</button>
+            <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" [disabled]="feedPostSelectGroup.id === null" 
+            (click)="whoCanSeeValue = 'groups';userGroupsModalRef.hide();whoCanSeePostModalRef.hide()">Save</button>
+          </div>
+        </div>
+      </ng-template>
+      <!-- User Groups Model Ends-->
+  
+      <!-- Who can see Comment Model Starts-->
+      <ng-template #whoCanCommentTemplate>
+        <div class="popup1">
+          <div class="modal-header py-0">
+            <h5 class="m-0 modal-title pull-left py-2">Who can comment your post?</h5>
+            <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="whoCanCommentValue = 'anyone';whoCanCommentOnPostModalRef.hide()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body popupSiZe">
+            <!-- <p class="mb-3">Your post will be visible on feed in search results</p> -->
+            <ul>
+              <li role="menuitem" (click)="whoCanCommentValue = 'anyone'" class="my-1 border-bottom"><a class="dropdown-item" [ngStyle]="{'background-color': whoCanCommentValue == 'anyone'?'#E8E8E8':''}">
+                <span class="material-icons-outlined align-bottom mr-1">public</span>
+                <span><b>Anyone </b> <br/>Anyone can comment</span>
+              </a></li>
+              <li role="menuitem" (click)="whoCanCommentValue = 'connection'" class="my-1 border-bottom"><a class="dropdown-item" [ngStyle]="{'background-color': whoCanCommentValue == 'connection'?'#E8E8E8':''}">
+                <span class="material-icons-outlined align-bottom mr-1">group</span>
+                <span><b>Connections </b><br/>Connections who can view can also comment</span>
+              </a></li>
+              <li role="menuitem" (click)="whoCanCommentValue = 'none'" class="my-1">
+                <a class="dropdown-item" [ngStyle]="{'background-color': whoCanCommentValue == 'none'?'#E8E8E8':''}">
+                  <span class="material-icons-outlined align-bottom mr-1">speaker_notes_off</span> 
+                  <span><b>None</b> <br/>No one can comment</span>
+                </a></li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" (click)="whoCanCommentValue = 'anyone';whoCanCommentOnPostModalRef.hide()">Back</button>
+            <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="whoCanCommentOnPostModalRef.hide()">Save</button>
+          </div>
+        </div>
+        </ng-template>
+      <!-- Who can see Comment Model Ends-->

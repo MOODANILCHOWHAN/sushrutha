@@ -34,6 +34,16 @@
         <span>
             {{jobDetails.description}}
         </span>
+        <br>
+        @if(jobDetails.description.eligibility){
+          <span>{{jobDetails.description.eligibility}}</span>
+          <br>
+        }
+        @if(jobDetails.description.responsibility){
+          <span>{{jobDetails.description.responsibility}}</span>
+          <br>
+        }
+        
     </div>
     <div>
         @if(jobDetails.interviewType == 'Walk-In'){
@@ -54,5 +64,8 @@
               }
               
         }
+    </div>
+    <div>
+      
     </div>
 </div>

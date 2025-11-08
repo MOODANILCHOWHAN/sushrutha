@@ -1,0 +1,921 @@
+<ng-container
+*ngIf="{
+  userdata: (notifications.userdata.asObservable() | async)
+    ?.userDetailsVo
+} as data"
+>
+<div [style.opacity]="openWhoCanComment ? 0.5 :1">
+  <!-- create/edit/share post heading starts -->
+<div class="modal-header py-2" style="background-color: #e6f0f9">
+  <h5 class="modal-title font-weight-bold my-1 pull-left">
+    {{
+      editFeed && !shareFeed
+        ? "Edit Post"
+        : !editFeed && shareFeed
+        ? "Share"
+        : "Create a Post"
+    }}
+  </h5>
+  <button
+    type="button"
+    class="close pull-right"
+    aria-label="Close"
+    (click)="discardPost(templateNested)"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<!-- create/edit/share post heading ends -->
+
+<div class="modal-body">
+    <!-- create/edit/share post profile start -->
+  <div class="d-flex" *ngIf="!isCompanyOrInternship || shareFeed ; else companyOrInternship">
+    <div style="width: 60px; height: 60px">
+      <img
+        class="img-fluid rounded-circle img-thumbnail"
+        [lazyLoad]="
+          snack.getJsImage(
+            (notifications.userdata.asObservable() | async)
+              ?.userDetailsVo.encodedImagePath,
+            'assets/img/default-user.png'
+          )
+        "
+        errorImage="assets/img/default-user.png"
+      />
+    </div>
+    <div class="align-self-center ml-3">
+      <p>
+        <b
+          >{{ data.userdata?.firstName | titlecase }}
+          {{ data.userdata?.middleName | titlecase }}
+          {{ data.userdata?.lastName | titlecase }}</b
+        >
+      </p>
+    </div>
+    <div class="ml-auto mr-2" *ngIf="!editFeed">
+      <div class="btn-group" dropdown placement="bottom left">
+        <button [style.pointer-events]="['group','company','internship'].includes(componentType) ? 'none' : 'cursor'"
+          id="button-alignment"
+          dropdownToggle
+          type="button"
+          [title]="arrayToString.toString()"
+          (click)="whoCanSeeValue = whoCanSeePostFake;whoCanSeePostModel()"
+          class="btn badge badge-pill btn-success border p-2 "
+         [ngClass]="{ 'dropdown-toggle': !shareFeed }"
+          aria-controls="dropdown-basic"
+        >
+        <i *ngIf="whoCanSeeValue=='anyone'" class="fa fa-globe" aria-hidden="true"></i>
+        <span style="font-size: 17px;" *ngIf="whoCanSeeValue ==='groups'" class="material-icons-outlined align-bottom mr-1">groups</span>
+        <span style="font-size: 17px;" *ngIf="whoCanSeeValue !='anyone' &&whoCanSeeValue !='groups'" class="material-icons-outlined align-bottom mr-1">group</span>
+          {{
+            whoCanSeePostFake === "groups"
+              ? feedPostSelectGroup.name
+              : (whoCanSeePostFake | titlecase)
+          }}
+          <span class="caret"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <ng-template #companyOrInternship>
+    <div class="d-flex" >
+      <div style="width: 60px; height: 60px">
+        <img  style="width:60px;height: 50px;"  *ngIf="componentType === 'company'"
+          class="img-fluid rounded-circle img-thumbnail"
+          [src]="snack.getJsImage(companyOverViewDets.companyProfile.companyLogoPath,'assets/img/default-user.png')"
+          errorImage="assets/img/default-user.png"
+        />
+      </div>
+      <div class="align-self-center ml-3">
+        <p>
+          <b *ngIf="componentType === 'company'"> {{companyOverViewDets?.companyProfile?.companyName}}</b
+          >
+        </p>
+      </div>
+      <div class="ml-auto mr-2" *ngIf="!editFeed">
+        <div class="btn-group" placement="bottom left">
+          <button 
+            id="button-alignment"
+            type="button"
+            [title]="arrayToString.toString()"
+            class="btn badge badge-pill btn-success border p-2 "
+            aria-controls="dropdown-basic"
+          >
+            <i class="fa fa-globe" aria-hidden="true"></i>
+              Anyone
+            <span class="caret"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+<!-- create/edit/share post profile ends -->
+
+  <quill-editor
+    id="createContent"
+    [modules]="quillConfig"
+    [(ngModel)]="feedContent"
+    placeholder="What's on your mind, write here"
+  ></quill-editor>
+
+  <!--File Preview-->
+  <div class="overflow-hidden tc position-relative mt-2" *ngIf="displayImage">
+    <div style="top: 5px; float: right; right: 5px; position: absolute;">
+      <button class="btn btn-sm btn-light mr-1" >
+        <i class="fa fa-lg fa-times" aria-hidden="true" (click)="removeImg()"></i>
+      </button>
+      <button class="btn btn-sm btn-light" *ngIf ='editFeed' (click)="file1.click()">
+        <i class="fas fa-edit" *ngIf ='editFeed' > </i>
+        <input type="file" style="display: none;" (change)="uploadImage($event)" #file1>
+      </button>
+    </div>
+    <div>
+      <img class="img-fluid" [lazyLoad]="displayImage" />
+    </div>
+  </div>
+  <div class="d-none">
+    <carousel [showIndicators]="false">
+      <slide>
+        <img
+          lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/airplane.png"
+          alt="first slide"
+          style="display: block; width: 100%"
+        />
+      </slide>
+      <slide>
+        <img
+          lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/goldhill.png"
+          alt="second slide"
+          style="display: block; width: 100%"
+        />
+      </slide>
+      <slide>
+        <img
+          lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/boat.png"
+          alt="third slide"
+          style="display: block; width: 100%"
+        />
+      </slide>
+    </carousel>
+  </div>
+  <div>
+    <div class="text-center" *ngIf="createPostFileLoading">
+      <all-loaders class="smallFileLoader"></all-loaders>
+    </div>
+    <div class="d-flex img-thumbnail" *ngIf="!editFeed && dispalyfileData">
+      <div style="width: 200px" *ngIf="dispalyfileData.encodedFileImagePaths &&dispalyfileData.encodedFileImagePaths[0]">
+        <img
+          class="img-fluid w-100"
+          [lazyLoad]="
+            snack.getJsImage(
+              dispalyfileData.encodedFileImagePaths[0],
+              'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs'
+            )
+          "
+          errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCR"
+        />
+      </div>
+      <div style="width: 200px" *ngIf="dispalyfileData.encodedFileImagePaths == null">
+        <img class="img-fluid w-100" lazyLoad="assets/img/jobseeker/doc.png" />
+      </div>
+      <div class="ml-2">
+        <p class="bold">{{ dispalyfile.name }}</p>
+        <p class="smallFont text-muted">
+          {{ formatBytes(dispalyfile.size) }}
+        </p>
+      </div>
+      <div class="ml-auto">
+        <button class="btn btn-sm btn-light" *ngIf="!editFeed" (click)="deleteFeedItemForFile();dispalyfile = null;dispalyfileData = null ">
+          <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <div *ngIf=" editFeed && dispalyfileData && dispalyfileData.encodedFileImagePaths && dispalyfileData.encodedFileImagePaths.length > 0">
+      <carousel [showIndicators]="false">
+        <slide
+          *ngFor="let img of dispalyfileData.encodedFileImagePaths"
+        >
+          <img
+            class="border"
+            [lazyLoad]="
+              snack.getJsImage(
+                img,
+                'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs'
+              )
+            "
+            errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+            alt="first slide"
+            style="display: block; width: 100%"
+          />
+        </slide>
+      </carousel>
+    </div>
+    <div class="d-flex d-none img-thumbnail" *ngIf="(videoUrl || videoDescription) && sanitVideoUrl && !editFeed ">
+      <div style="width: 200px">
+        <iframe class="img-thumbnail" [src]="sanitVideoUrl ? sanitVideoUrl : 'assets/img/admin/login.jpg' "
+        ></iframe>
+      </div>
+      <div class="ml-2">
+        <p class="bold videodescri">{{ videoDescription }}</p>
+        <!-- <p class="smallFont text-muted">26MB</p> -->
+      </div>
+      <div class="ml-auto">
+        <button class="btn btn-sm btn-light" (click)=" videoUrl = null; videoDescription = null; sanitVideoUrl = null">
+          <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <div class="d-flex d-none img-thumbnail" *ngIf="sanitVideoUrl && editFeed">
+      <div style="width: 200px">
+        <iframe class="img-thumbnail" [src]="sanitVideoUrl ? sanitVideoUrl : 'assets/img/admin/login.jpg' "
+        ></iframe>
+      </div>
+      <div class="ml-2">
+        <p class="bold videodescri">{{ videoDescription }}</p>
+        <!-- <p class="smallFont text-muted">26MB</p> -->
+      </div>
+      <div class="ml-auto">
+        <button class="btn btn-sm btn-light" (click)=" videoUrl = null; videoDescription = null; sanitVideoUrl = null">
+          <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!--File Preview Ends-->
+
+  <!--Share Preview Starts-->
+  <div
+    class="bg-light border mb-3 overflow-hidden p-2 rounded"
+    *ngIf="shareFeed"
+    [ngStyle]="{ 'margin-top.px': displayImage ? -20 : 25 }"
+  >
+    <!-- <div *ngIf="displayImage" style="top: 40px; position: relative; float: right; right: 10px;">
+      <button class="btn btn-sm btn-info" (click)="displayImage = null;image = null;">
+        <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+      </button>
+    </div> -->
+    <div class="d-flex">
+      <div style="width: 60px; height: 60px" *ngIf="!shareFeed.companyDTO">
+        <img
+          class="img-fluid rounded-circle img-thumbnail 1"
+          [lazyLoad]="
+            snack.getJsImage(
+              shareFeed.owner.profileImgPath,
+              'assets/img/default-user.png'
+            )
+          "
+          errorImage="assets/img/default-user.png"
+        />
+      </div>
+      <div style="width: 60px; height: 60px;" *ngIf="shareFeed.companyDTO">
+        <img class="img-fluid rounded-circle img-thumbnail 2"
+          [lazyLoad]="snack.getJsImage(shareFeed.companyDTO.companyLogoPath, 'assets/img/internship-default.png')" errorImage="assets/img/default-user.png">
+      </div>
+      <div class="align-self-center ml-3" *ngIf="!shareFeed.companyDTO">
+        <p>
+          <b
+            >{{ shareFeed.owner.firstName | titlecase }}
+            {{ shareFeed.owner.middleName | titlecase }}
+            {{ shareFeed.owner.lastName | titlecase }}</b
+          >
+        </p>
+      </div>
+      <div class="align-self-center ml-3" *ngIf="shareFeed.companyDTO">
+        <p>
+          <b>{{ shareFeed.companyDTO.companyName | titlecase }}</b>
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <p class="p-3">
+        <!-- <span *ngIf="shareFeed.postDescription" [innerHTML]="showFeedMore ? shareFeed.postDescription : returnPostDescription(shareFeed.postDescription) "> -->
+        <span *ngIf="shareFeed.postDescription">
+          <quill-editor
+            [modules]="quillConfig"
+            readOnly="true"
+            [ngModel]=" showFeedMore ? shareFeed.postDescription : returnPostDescription(shareFeed.postDescription) "
+            placeholder=""
+          ></quill-editor>
+        </span>
+        <span
+          *ngFor="let tag of sharedFeedTags; let t = index"
+          class="blue m-1 pointer"
+          (click)="loadHashtagProfile(tag.hashTagName)"
+          ><b>{{ tag.hashTagName }}</b></span
+        >
+        <!-- <span *ngIf="(shareFeed.postDescription && checkPostDescriptionLength(shareFeed.postDescription) ) && !showFeedMore"> ...</span> -->
+        <span
+          class="blue pointer"
+          style="cursor: pointer"
+          *ngIf="
+            shareFeed.postDescription &&
+            checkPostDescriptionLength(shareFeed.postDescription) &&
+            !showFeedMore
+          "
+          (click)="showFeedMore = true"
+          >Show More
+        </span>
+      </p>
+      <div
+        *ngIf="showFeedMore"
+        (click)="showFeedMore = false"
+        style="clear: both"
+      >
+        <span class="blue pointer"> Show Less</span>
+      </div>
+    </div>
+    <div
+      class="w-100"
+      *ngIf="
+        shareFeed.encodedFilePath && shareFeed.fileType === 'Image'
+      "
+    >
+      <img
+        class="img-fluid w-100"
+        [lazyLoad]="
+          snack.getJsImage(
+            shareFeed.encodedFilePath,
+            'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs'
+          )
+        "
+      />
+    </div>
+    <div class="w-100" *ngIf="shareFeed.videoLink">
+      <iframe
+        width="100%"
+        height="100%"
+        [src]="shareFeed.videoLink"
+        frameborder="0"
+        title="My summary video"
+        class="height_250px"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+    <div
+      class="w-100"
+      *ngIf="
+        shareFeed.encodedFileImagePaths &&
+        shareFeed.encodedFileImagePaths.length > 0
+      "
+    >
+      <carousel [showIndicators]="false">
+        <slide *ngFor="let img of shareFeed.encodedFileImagePaths">
+          <img
+            [lazyLoad]="
+              snack.getJsImage(
+                img,
+                'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs'
+              )
+            "
+            alt="first slide"
+            style="display: block; width: 100%"
+          />
+        </slide>
+      </carousel>
+    </div>
+  </div>
+  <!--Share Preview Ends-->
+
+  <ng-select
+    class="my-3 custom"
+    *ngIf="displayTags"
+    (add)="addItem($event)"
+    [addTag]="!isenable"
+    [ngModel]="selectedTags"
+    bindLabel="hashTagName"
+    (clear)="clearAllHashtag()"
+    (search)="getHashTagSuggetions($event.term)"
+    [items]="tagSuggetions"
+    placeholder="Select any hashtag"
+    multiple="true"
+    (remove)="onRemoveHashTag($event)"
+    dropdownPosition="top"
+  ></ng-select>
+  <p class="font-weight-bold py-2">
+    <span class="blue pointer" (click)="toggleHashTag()"
+      >Add Hashtag</span
+    >
+  </p>
+  <div [ngClass]="{ 'pb-4': editFeed || shareFeed }" class="has-button">
+    <!-- <button mat-mini-fab class="mat-elevation-z0 mr-3" (click)="displayTags = !displayTags;"
+      style="background-color: #e6f0f9; color: #566c7a !important;">
+      <span class="material-icons">add</span>
+    </button> -->
+      <ng-container *ngIf="!editFeed && !shareFeed">
+        <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" id="photoButton" *ngIf="!displayImage && !dispalyfile && !videoUrl"(click)="file.click()">
+        <img class="mb-1 mr-1" width="14px" height="14px" src="assets/img/jobseeker/picture.svg" draggable="false">&nbsp; Photo
+        </button>
+        <input type="file" style="display: none;" (change)="uploadImage($event)" accept="image/*" #file id="fileUpload">
+        <input type="file" style="display: none;" (change)="uploadFile($event)" accept=".pdf,.doc,.docx,.xls,.xlsx.xml,.ppt,.pptx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" #filenew>
+        <button class="btn btn-lightBlue btn-sm rounded-pill mr-3"  id="videoButton"
+        (click)="openShareDocument(videoPreviewTemplate)" *ngIf="!displayImage && !dispalyfile && !videoUrl">
+        <!-- <i class="fa mr-2 fa-video-camera" aria-hidden="true"></i>  -->
+        <img class="mb-1 mr-1" width="20px" height="14px" src="assets/img/jobseeker/video.svg" draggable="false">&nbsp; Video</button>
+        <button class="btn btn-lightBlue btn-sm rounded-pill mr-3"  id="fileButton"
+        *ngIf="!displayImage && !dispalyfile && !videoUrl" (click)="filenew.click()">
+        <!-- <i class="fa mr-2 fa-file-text-o"aria-hidden="true"></i> -->
+        <img class="mb-1 mr-1" width="14px" height="14px" src="assets/img/jobseeker/files.svg" draggable="false">&nbsp; Files</button>
+        <span class="mx-2 text-secondary" *ngIf="!displayImage && !dispalyfile && !videoUrl">&#124;</span>
+        <button class="btn btn-lightBlue btn-sm rounded-pill" (click)="openWhoCanCommentOptions(whoCanCommentTemplate)">
+          <span *ngIf="whoCanCommentValue == 'none'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes_off</span> No one</span>
+          <span *ngIf="whoCanCommentValue == 'anyone'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes</span> Anyone</span>
+          <span *ngIf="whoCanCommentValue == 'connection'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes</span> Connections</span>
+        </button>
+      </ng-container>
+
+    <button
+      *ngIf="!editFeed && !shareFeed"
+      class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+      (click)="postFeed()"
+      [disabled]="postFeedLoader"
+    >
+      <span
+        class="spinner-border spinner-border-sm mr-2"
+        *ngIf="postFeedLoader"
+      ></span
+      >Post
+    </button>
+    <button
+      *ngIf="editFeed && !shareFeed"
+      class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+      (click)="updateFeed()"
+      [disabled]="postFeedLoader"
+    >
+      <span
+        class="spinner-border spinner-border-sm mr-2"
+        *ngIf="postFeedLoader"
+      ></span
+      >Update Post
+    </button>
+    <button
+      *ngIf="!editFeed && shareFeed"
+      class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+      (click)="sharePost()"
+      [disabled]="postFeedLoader"
+    >
+      <span
+        class="spinner-border spinner-border-sm mr-2"
+        *ngIf="postFeedLoader"
+      ></span
+      >Share Post
+    </button>
+  </div>
+</div>
+</div>
+</ng-container>
+
+<!-- <ng-template #whoCanSeePostTemplate>
+  </ng-template> -->
+
+  <ng-template #whoCanCommentTemplate>
+    <div class="container">
+      <div class="blur-layer"></div>
+      <div class="modal-popup">
+        <!-- Content of the modal popup -->
+        <div class="popup1" style="box-shadow: 3px 3px 10px 4px;">
+          <div class="modal-header py-0">
+            <h5 class="m-0 modal-title pull-left py-2">
+              Who can comment your post?
+            </h5>
+            <button
+              type="button"
+              class="close pull-right pt-4"
+              aria-label="Close"
+              (click)=" whoCanCommentOnPostModalRef.hide();savedCommentgroupValue()"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body popupSiZe">
+            <!-- <p class="mb-3">Your post will be visible on feed in search results</p> -->
+            <ul>
+              <li
+                role="menuitem"
+                (click)="whoCanCommentstyle = 'anyone'"
+                class="my-1 border-bottom"
+              >
+                <a
+                  class="dropdown-item"
+                  [ngStyle]="{
+                    'background-color':
+                    whoCanCommentstyle == 'anyone' ? '#E8E8E8' : ''
+                  }"
+                >
+                  <span class="material-icons-outlined align-bottom mr-1"
+                    >public</span
+                  >
+                  <span><b>Anyone </b> <br />Anyone can comment</span>
+                </a>
+              </li>
+              <li
+                role="menuitem"
+                (click)="whoCanCommentstyle = 'connection'"
+                class="my-1 border-bottom"
+              >
+                <a
+                  class="dropdown-item"
+                  [ngStyle]="{
+                    'background-color':
+                    whoCanCommentstyle == 'connection' ? '#E8E8E8' : ''
+                  }"
+                >
+                  <span class="material-icons-outlined align-bottom mr-1"
+                    >group</span
+                  >
+                  <span
+                    ><b>Connections </b><br />Connections who can view can also
+                    comment</span
+                  >
+                </a>
+              </li>
+              <li
+                role="menuitem"
+                (click)="whoCanCommentstyle = 'none'"
+                class="my-1"
+              >
+                <a
+                  class="dropdown-item"
+                  [ngStyle]="{
+                    'background-color':
+                    whoCanCommentstyle == 'none' ? '#E8E8E8' : ''
+                  }"
+                >
+                  <span class="material-icons-outlined align-bottom mr-1"
+                    >speaker_notes_off</span
+                  >
+                  <span><b>None</b> <br />No one can comment</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="modal-footer" style="margin: 6px">
+            <button
+              class="btn btn-default btn-sm"
+              (click)=" whoCanCommentOnPostModalRef.hide();savedCommentgroupValue()"
+            >
+              Back
+            </button>
+            <button
+              class="btn btn-gradprimary btn-sm px-3 rounded-pill"
+              (click)="savedCommentValue(whoCanCommentstyle);whoCanCommentOnPostModalRef.hide()"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </ng-template>
+
+  <ng-template #templateNested>
+    <div
+      class="modal-header py-2"
+      style="background-color: #e6f0f9"
+    >
+      <h5 class="modal-title font-weight-bold my-1 pull-left">
+        Discard
+      </h5>
+    </div>
+    <div class="modal-body">
+      <!-- <p>Are you sure you want to leave and discard your draft, Recheck again?</p> -->
+      <p>Are you sure you want to discard your draft?</p>
+    </div>
+    <div class="modal-footer p-0 d-flex">
+      <div class="tc border-right">
+        <button class="btn btn-lg" (click)="discardModalRef.hide()">
+          Back
+        </button>
+      </div>
+      <div class="tc">
+        <button
+          class="btn btn-lg btn-link ml-2"
+          (click)="hidePopups()"
+        >
+          Discard
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #videoPreviewTemplate>
+    <div
+      class="modal-header py-2"
+      style="background-color: #e6f0f9"
+    >
+      <h5 class="modal-title font-weight-bold my-1 pull-left">
+        Select/Edit your video
+      </h5>
+      <button
+        type="button"
+        class="close pull-right"
+        aria-label="Close"
+        (click)="
+          videoModalRef.hide();
+          videoUrl = null;
+          videoDescription = null;
+          sanitVideoUrl = null
+        "
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="mt-3">
+        <form [formGroup]="videoForm">
+        <div class="mb-3">
+          <label for="documentTitle">Video URL</label>
+          <input
+            type="text"
+            [(ngModel)]="videoUrl"
+            formControlName="videourl"
+            class="form-control border"
+            id="documentTitle"
+            [tooltip]="snack.checktouchedvaliddirty(videoForm,'videourl')"
+            placeholder="Paste or enter a video URL."
+          />
+        </div>
+        <div class="mb-3">
+          <label for="videoDescription">Video Description</label>
+          <textarea
+            class="form-control border"
+            [(ngModel)]="videoDescription"
+            formControlName="videoDescrip"
+            [tooltip]="snack.checktouchedvaliddirty(videoForm,'videoDescrip')"
+            id="videoDescription"
+            placeholder="Add video description"
+          ></textarea>
+        </div>
+      </form>
+      </div>
+    </div>
+    <div class="modal-footer d-block tr">
+      <button
+        class="btn btn-sm btn-outline-info rounded-pill px-3"
+        (click)="
+          videoModalRef.hide();
+          videoUrl = null;
+          videoDescription = null
+        "
+      >
+        Back
+      </button>
+      <button
+      [disabled]="videoForm.invalid"
+        class="btn btn-sm btn-primary rounded-pill px-3"
+        (click)="videoModalRef.hide(); uploadVideoFile()"
+      >
+        Done
+      </button>
+    </div>
+  </ng-template>
+  <ng-template #shareFeedOnProfileTemplate>
+    <div class="popup1">
+      <div class="modal-header py-0 posthead">
+        <h5 class="m-0 modal-title pull-left py-2">Post successful</h5>
+        <!-- <button type="button" class="close pull-right pt-4" aria-label="Close"
+        (click)="showFeedOnProfRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+        <i (click)="showFeedOnProfRef.hide()" class="material-icons postclear">clear</i>
+      </div>
+      <div class="modal-body popupSiZe">
+        <p>Share a post on your profile.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default btn-sm" (click)="showFeedOnProfRef.hide()">Not Now</button>
+        <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="shareFeedItem(template)">Continue</button>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #template>
+      <ng-container *ngIf="{ userdata: (notifications.userdata.asObservable() | async)?.userDetailsVo} as data">
+      <div class="modal-header py-2" style="background-color: #e6f0f9;">
+        <h5 class="modal-title font-weight-bold my-1 pull-left">{{ editFeed && !shareFeed ? 'Edit Post' : !editFeed && shareFeed ? 'Share' : 'Create a Post' }}</h5>
+        <button type="button" class="close pull-right" aria-label="Close"
+          (click)="discardPost(templateNested)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex">
+          <div >
+            <img class="img-fluid rounded-circle img-thumbnail " style="width: 60px; height: 60px;" *ngIf="!shareFeed"
+            [src]="snack.getJsImage(companyOverViewDets.companyProfile.companyLogoPath,'assets/img/default-company.png')">
+            <img class="img-fluid rounded-circle img-thumbnail " style="width: 60px; height: 60px;" *ngIf="shareFeed"
+            [src]="snack.getJsImage(data.userdata.encodedImagePath,'assets/img/default-user.png')">
+          </div>
+          <div class="align-self-center ml-3">
+            <p *ngIf="!shareFeed"><b>{{companyOverViewDets?.companyProfile?.companyName}}</b></p>
+            <p *ngIf="shareFeed"><b>{{data.userdata?.firstName | titlecase }} {{data.userdata?.middleName | titlecase }}
+              {{data.userdata?.lastName | titlecase }}</b></p>
+          </div>
+          <div class="ml-auto mr-2" *ngIf ='!editFeed'>
+            <div class="btn-group" dropdown placement="bottom left">
+              <!-- <button id="button-alignment" dropdownToggle type="button" [title]="arrayToString" (click)="whoCanSeePostModel(whoCanSeePostTemplate)"
+                class="btn badge badge-pill btn-success border p-2 dropdown-toggle" aria-controls="dropdown-basic">
+                <i class="fa fa-globe" aria-hidden="true"></i> {{ whoCanSeeValue === 'groups' ? feedPostSelectGroup.name : (whoCanSeeValue | titlecase) }} <span class="caret"></span>
+              </button> -->
+              <button id="button-alignment" type="button" title="Anyone" style="cursor:auto"
+                class="btn badge badge-pill btn-success border p-2">
+                <i class="fa fa-globe" aria-hidden="true"></i> Anyone <span class="caret"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="">
+         <div id="createContent" [attr.contenteditable]="true" [innerHTML]="feedContent"
+            data-placeholder="What's on your mind, write here" aria-placeholder="What's on your mind, write here" placeholder="What's on your mind, write here">
+         </div>
+        </div> -->
+        <quill-editor
+        id="createContent"
+        [modules]="quillConfig"
+        [(ngModel)]="feedContent"
+        placeholder="What's on your mind, write here"
+      ></quill-editor>
+    
+        <!--File Preview-->
+        <div class="overflow-hidden tc position-relative mt-2" *ngIf="displayImage">
+          <div style="top: 5px; float: right; right: 5px; position: absolute;">
+            <button class="btn btn-sm btn-light" *ngIf ='!editFeed' (click)="displayImage = null;image = null;">
+              <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div>
+            <img class="img-fluid" [lazyLoad]="displayImage">
+          </div>
+        </div>
+          <div class="d-none">
+            <carousel [showIndicators]="false">
+              <slide>
+                <img lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/airplane.png" alt="first slide"
+                  style="display: block; width: 100%;">
+              </slide>
+              <slide>
+                <img lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/goldhill.png" alt="second slide"
+                  style="display: block; width: 100%;">
+              </slide>
+              <slide>
+                <img lazyLoad="https://homepages.cae.wisc.edu/~ece533/images/boat.png" alt="third slide"
+                  style="display: block; width: 100%;">
+              </slide>
+            </carousel>
+          </div>
+          <div>
+            <div class="text-center" *ngIf="createPostFileLoading">
+              <all-loaders class="smallFileLoader"></all-loaders>
+            </div>
+            <div class="d-flex img-thumbnail" *ngIf="!editFeed && dispalyfileData">
+              <div style="width: 200px;">
+                <img class="img-fluid w-100"
+                [lazyLoad]="snack.getJsImage(dispalyfileData.encodedFileImagePaths[0], 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+                errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs">
+              </div>
+              <div class="ml-2">
+                <p class="bold">{{dispalyfile.name}}</p>
+                <p class="smallFont text-muted">{{ formatBytes(dispalyfile.size)}}</p>
+              </div>
+              <div class="ml-auto">
+                <button class="btn btn-sm btn-light" *ngIf ='!editFeed' (click)="deleteFeedItemForFile();dispalyfile = null;dispalyfileData = null;">
+                  <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="editFeed && dispalyfileData && dispalyfileData.encodedFileImagePaths && dispalyfileData.encodedFileImagePaths.length > 0">
+              <carousel [showIndicators]="false">
+                <slide *ngFor="let img of dispalyfileData.encodedFileImagePaths">
+                  <img class="border" [lazyLoad]="snack.getJsImage(img, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+                  errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs"
+                  alt="first slide"
+                    style="display: block; width: 100%;">
+                </slide>
+              </carousel>
+            </div>
+            <div class="d-flex d-none img-thumbnail" *ngIf="(videoUrl || videoDescription) && sanitVideoUrl && !editFeed">
+              <div style="width: 200px;">
+                <!-- <img class="img-thumbnail"
+                  src="https://www.vidyard.com/media/video-thumbnail-1920x1080-1.jpg"> -->
+                  <iframe class="img-thumbnail"
+                  [src]="sanitVideoUrl ? sanitVideoUrl: 'assets/img/admin/login.jpg'"></iframe>
+              </div>
+              <div class="ml-2">
+                <p class="bold videodescri">{{videoDescription}}</p>
+                <!-- <p class="smallFont text-muted">26MB</p> -->
+              </div>
+              <div class="ml-auto">
+                <!-- <button class="btn btn-sm btn-info mr-2">
+                  <i class="fa fa-lg fa fa-pencil" aria-hidden="true"></i>
+                </button> -->
+                <button class="btn btn-sm btn-light" (click)="videoUrl = null;videoDescription = null;sanitVideoUrl =null">
+                  <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="w-100" *ngIf="sanitVideoUrl && editFeed">
+              <iframe width="100%" height="100%" [src]="sanitVideoUrl ? sanitVideoUrl: 'assets/img/admin/login.jpg'" frameborder="0" title="My summary video" class="height_250px" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+            </div>
+          </div>
+        
+        <!--File Preview Ends-->
+    
+        <!--Share Preview Starts-->
+        <div class="bg-light border mb-3 overflow-hidden p-2 rounded" *ngIf="shareFeed" [ngStyle]="{'margin-top.px' : displayImage ? -20 : 25}">
+    
+          <div class="d-flex">
+            <div style="width: 60px; height: 60px;">
+              <img class="img-fluid rounded-circle img-thumbnail" *ngIf="!shareFeed.companyDTO"
+                [lazyLoad]="snack.getJsImage(shareFeed.owner.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+                <img class="img-fluid rounded-circle img-thumbnail" *ngIf="shareFeed.companyDTO"
+                [lazyLoad]="snack.getJsImage(companyOverViewDets.companyProfile.companyLogoPath, 'assets/img/internship-default.png')" errorImage="assets/img/default-user.png">
+            </div>
+            <div class="align-self-center ml-3">
+              <p><b *ngIf="!shareFeed.companyDTO">{{shareFeed.owner.firstName | titlecase }} {{shareFeed.owner.middleName | titlecase }}
+                  {{shareFeed.owner.lastName | titlecase }}</b>
+                  <b *ngIf="shareFeed.companyDTO">{{shareFeed.companyDTO.companyName | titlecase }}</b>
+              </p>
+            </div>
+          </div>
+    
+          <div>
+            <p class="p-3">
+              <span *ngIf="shareFeed.postDescription" [innerHTML]="showFeedMore ? shareFeed.postDescription : (shareFeed.postDescription | slice:0:150) ">
+              </span>
+              <span *ngFor="let tag of sharedFeedTags; let t = index" class="blue m-1 pointer" (click)="loadHashtagProfile(tag.hashTagName)"><b>{{tag.hashTagName}}</b></span>
+              <span *ngIf="(shareFeed.postDescription && shareFeed.postDescription.length > 150) && !showFeedMore"> ...</span>
+              <span class="blue pointer" style="cursor: pointer;"
+                  *ngIf="(shareFeed.postDescription && shareFeed.postDescription.length > 150) && !showFeedMore"
+                  (click)="showFeedMore=true">Show More
+              </span>
+              <span class="blue pointer" *ngIf="showFeedMore" (click)="showFeedMore=false"> Show Less</span>
+            </p>
+          </div>
+          <div class="w-100" *ngIf="shareFeed.encodedFilePath && shareFeed.fileType === 'Image'">
+            <img class="img-fluid w-100"
+              [lazyLoad]="snack.getJsImage(shareFeed.encodedFilePath, 
+              'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+              errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs">
+          </div>
+          <div class="w-100" *ngIf="shareFeed.videoLink">
+            <iframe width="100%" height="100%" [src]="shareFeed.videoLink" frameborder="0" title="My summary video" class="height_250px" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+          </div>
+          <div class="w-100" *ngIf="shareFeed.encodedFileImagePaths && shareFeed.encodedFileImagePaths.length > 0">
+            <carousel [showIndicators]="false">
+              <slide *ngFor="let img of shareFeed.encodedFileImagePaths">
+                <img [lazyLoad]="snack.getJsImage(img, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')" alt="first slide"
+                  errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs" a
+                  alt="first slide"
+                  style="display: block; width: 100%;">
+              </slide>
+            </carousel>
+          </div>     
+        </div>
+        <!--Share Preview Ends-->
+       
+        <ng-select class="my-3" *ngIf="displayTags" (add)="addItem($event)" addTag="true" appendTo="body" bindLabel="hashTagName" (search)="getHashTagSuggetions($event.term)" [items]="tagSuggetions" placeholder="Select any hashtag" multiple="true"></ng-select>
+        <p class="blue pointer font-weight-bold py-2" (click)="displayTags = !displayTags;">Add Hashtag</p>
+        <div [ngClass]="{'pb-4' : (editFeed || shareFeed) }">
+          <!-- <button mat-mini-fab class="mat-elevation-z0 mr-3" (click)="displayTags = !displayTags;"
+            style="background-color: #e6f0f9; color: #566c7a !important;">
+            <span class="material-icons">add</span>
+          </button> -->
+            <ng-container *ngIf="!editFeed && !shareFeed">
+              <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" *ngIf="!displayImage && !dispalyfile && !videoUrl"
+              (click)="file.click()">
+              <!-- <i class="fa mr-2 fa-picture-o" aria-hidden="true"></i> -->
+              <img class="mb-1 mr-1" width="14px" height="14px" src="assets/img/jobseeker/picture.svg" draggable="false">&nbsp; Photo</button>
+              <input type="file" style="display: none;" (change)="uploadImage($event)" #file>
+              <input type="file" style="display: none;" (change)="uploadFile($event)" #filenew>
+              <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" 
+              (click)="openShareDocument(videoPreviewTemplate)" *ngIf="!displayImage && !dispalyfile && !videoUrl">
+              <!-- <i class="fa mr-2 fa-video-camera" aria-hidden="true"></i> -->
+              <img class="mb-1 mr-1" width="20px" height="14px" src="assets/img/jobseeker/video.svg" draggable="false">&nbsp; Video</button>
+              <button class="btn btn-lightBlue btn-sm rounded-pill mr-3" 
+              *ngIf="!displayImage && !dispalyfile && !videoUrl" (click)="filenew.click()">
+              <!-- <i class="fa mr-2 fa-file-text-o" aria-hidden="true"></i> -->
+              <img class="mb-1 mr-1" width="14px" height="14px" src="assets/img/jobseeker/files.svg" draggable="false">&nbsp; Files</button>
+              <span class="mx-2 text-secondary" *ngIf="!displayImage && !dispalyfile && !videoUrl">&#124;</span>
+              <button class="btn btn-lightBlue btn-sm rounded-pill" (click)="openWhoCanCommentOptions(whoCanCommentTemplate)">
+                <span *ngIf="whoCanCommentValue == 'none'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes_off</span> No one</span>
+                <span *ngIf="whoCanCommentValue == 'anyone'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes</span> Anyone</span>
+                <span *ngIf="whoCanCommentValue == 'connection'"><span class="material-icons-outlined" style="font-size: 15px; vertical-align: middle;">speaker_notes</span> Connections</span>
+              </button>
+            </ng-container>
+    
+              <button *ngIf="!editFeed && !shareFeed" class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+              (click)="postFeed()" [disabled]="postFeedLoader">
+              <span class="spinner-border spinner-border-sm mr-2" *ngIf="postFeedLoader"></span>Post</button>
+              <button *ngIf="editFeed && !shareFeed" class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+              (click)="updateFeed()" [disabled]="postFeedLoader">
+              <span class="spinner-border spinner-border-sm mr-2" *ngIf="postFeedLoader"></span>Update Post</button>
+              <button *ngIf="!editFeed && shareFeed" class="btn btn-primary rounded-pill px-4 ml-auto float-right mb-2"
+              (click)="sharePost()" [disabled]="postFeedLoader">
+              <span class="spinner-border spinner-border-sm mr-2" *ngIf="postFeedLoader"></span>Share Post</button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>

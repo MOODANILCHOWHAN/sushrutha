@@ -1,0 +1,764 @@
+<div class="single-post">
+    <div class="card shadow-none">
+      <p class="p-2 px-3 border-bottom" *ngIf="feed?.activityType && feed?.activityType !== 'SHARE_FEED_ITEM' "> <b class="pointer" 
+        [routerLink]="['/gs/'+loggedUserDets['portfolioUserId']]">you</b> {{ getActivityType(feed) }} 
+        <b *ngIf="feed?.groupId !== 0">{{ feed?.groupName }}</b></p>
+        <p class="p-2 px-3 border-bottom" *ngIf="feed?.activityType && feed?.activityType === 'SHARE_FEED_ITEM' "> <b class="pointer" 
+        [routerLink]="['/gs/'+loggedUserDets['portfolioUserId']]">you</b> {{ getActivityType(feed) }} </p>
+      <p *ngIf="feed?.activityType && feed?.activityType === 'SHARE_FEED_ITEM'">{{ loggedUserDets['designation'] }}</p>
+      <!-- <hr *ngIf="feed?.activityType"> -->
+      <div class="card-body border-bottom">
+      <div class="d-flex">
+        <div *ngIf="isFeedComponent;else comapanyOrInternshipLogo">
+          <div class="avatarImgDiv pointer 1" *ngIf="feed.owner && !feed?.companyDTO" [routerLink]="['/gs/', feed.owner.publicUrl]">
+            <img class="img-fluid rounded-circle" alt="User Pic" [src]="snack.getJsImage(feed.owner.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+          <div class="avatarImgDiv pointer 2" *ngIf="feed?.companyDTO && !feed?.companyDTO?.internship" routerLink="/overview/working-at-{{feed.companyDTO.redirectUrl}}-{{feed.companyDTO.companyUniqueId}}">
+            <img class="img-fluid rounded-circle" alt="Internship Pic" [src]="snack.getJsImage(feed?.companyDTO?.companyLogoPath, 'assets/img/internship-default.png')" errorImage="assets/img/internship-default.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+          <div class="avatarImgDiv pointer 3" *ngIf="feed?.companyDTO && feed?.companyDTO?.internship" 
+          routerLink="/internship-overview/working-at-{{feed.companyDTO.redirectUrl}}-overview-{{feed.companyDTO.companyUniqueId}}">
+            <img class="img-fluid rounded-circle" alt="Company Pic" [src]="snack.getJsImage(feed?.companyDTO?.companyLogoPath, 'assets/img/internship-default.png')" errorImage="assets/img/default-user.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+        </div>
+        <ng-template #comapanyOrInternshipLogo>
+          <div class="avatarImgDiv pointer 4 " *ngIf="isUserAdminInInternshipPage" >
+            <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle 1" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+            <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle 2" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+          <div class="avatarImgDiv pointer 5" *ngIf="!isUserAdminInInternshipPage">
+            <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle" [src]="presentCompany?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+            <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle" [src]="presentInternship?.company?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+        </ng-template>
+        <div class="align-self-center">
+          <p *ngIf="feed.owner && !feed?.companyDTO" class="ml-3 my-0"><b><span class="pointer" [routerLink]="['/gs/', feed.owner.publicUrl]">{{feed.owner.firstName | titlecase }} {{feed.owner.middleName | titlecase }} {{feed.owner.lastName | titlecase }}</span> • <small class="text-muted">{{feed.updatedOn | date}}</small></b></p>
+          <!-- <p class="ml-3 my-0 text-black-50">Creative Director - Dynamic Dreamz</p> -->
+          <p *ngIf="feed.owner && !feed?.companyDTO" class="ml-3 my-0 text-muted" title="{{feed.owner.currentDesignation ? feed.owner.currentDesignation : feed.owner.profileTitle}}"><small class="jsgroupheadline">{{feed.owner.currentDesignation ? feed.owner.currentDesignation : feed.owner.profileTitle |slice :0:60 }}</small></p>
+          <!--Company Name-->
+          <p *ngIf="feed?.companyDTO" class="ml-3 my-0"><b><span *ngIf="!feed?.companyDTO.internship"
+            routerLink="/overview/working-at-{{feed.companyDTO.redirectUrl}}-{{feed.companyDTO.companyUniqueId}}" 
+            class="pointer">{{feed?.companyDTO?.companyName | titlecase }}</span><span *ngIf="feed?.companyDTO.internship"
+            routerLink="/internship-overview/working-at-{{feed.companyDTO.redirectUrl}}-overview-{{feed.companyDTO.companyUniqueId}}" 
+            class="pointer">{{feed?.companyDTO?.companyName | titlecase }}</span> • <small class="text-muted">{{feed.updatedOn | date}}</small></b></p>
+          <p *ngIf="feed?.companyDTO" class="ml-3 my-0 text-muted"><small>{{feed?.companyDTO?.followersCount }} {{feed?.companyDTO?.followersCount > 1 ? 'followers' : 'follower' }}</small></p>
+        </div>
+        <div class="align-self-center ml-auto">
+          <!-- <i class="fa fa-2x fa-ellipsis-h pointer" [matMenuTriggerFor]="topMenu" aria-hidden="true"></i> -->
+          <mat-icon class="pointer" [matMenuTriggerFor]="topMenu">more_horiz</mat-icon>
+          <mat-menu class="customMatMenu" #topMenu="matMenu" class="mat-menu-panel notificatonActions" xPosition="before">
+            <button mat-menu-item *ngIf="!feed.postSaved" (click)="saveFeedItem(feed)">
+              <mat-icon>bookmarks</mat-icon>
+              <span>Save post</span>
+            </button>
+            <button mat-menu-item *ngIf="feed.postSaved" (click)="unSaveFeedItem(feed)">
+              <mat-icon>bookmarks</mat-icon>
+              <span>Unsave post</span>
+            </button>
+            <button mat-menu-item *ngIf="feed.userType === 'OWNER' && !savedFeeds" (click)="editFeedItem(feed)">
+              <mat-icon>create</mat-icon>
+              <span>Edit post</span>
+            </button>
+            <button  mat-menu-item *ngIf="!savedFeeds" (click)="copyFeedLink(feed.feedItemId)">
+              <mat-icon>link</mat-icon>
+              <span>Copy link to post</span>
+            </button>
+            <button mat-menu-item *ngIf="feed.userType === 'OWNER' && !savedFeeds" (click)="openWhoCanCommentOptions(whoCanCommentTemplate)">
+              <mat-icon>speaker_notes</mat-icon>
+              <span>Who can comment?</span>
+            </button>
+            <button mat-menu-item *ngIf="feed.userType !== 'OWNER' && !savedFeeds && !activity" (click)="hidePost(feed)">
+              <mat-icon>block</mat-icon>
+              <span>Hide this post</span>
+            </button>
+            <button mat-menu-item *ngIf="feed.userType !== 'OWNER' && !savedFeeds" (click)="openReportModal()">
+              <mat-icon>flag</mat-icon>
+              <span>Report this post</span>
+            </button>
+            <button *ngIf="feed.userType == 'OWNER' && !savedFeeds" mat-menu-item>
+              <mat-icon>remove_red_eye</mat-icon>
+              <span routerLink="/groups/who-can-see-post" >Who can see?</span>
+            </button>
+            <button mat-menu-item  *ngIf="feed.userType == 'OWNER' && !savedFeeds" (click)="deleteFeedConfirmModal(delFeedConfirmTemplate)">
+              <mat-icon>delete_forever</mat-icon>
+              <span>Delete post</span>
+            </button>
+  
+            <!--Delete Feed Model Starts-->
+            <ng-template #delFeedConfirmTemplate>
+              <div class="modal-header py-0">
+                <h5 class="m-0 modal-title pull-left py-2"><b>Delete Post</b></h5>
+                <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="delFeedModalRef.hide()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body text-center">
+                <p>Are you sure you want to permanently delete this post from GradSiren?</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-default btn-sm" (click)="delFeedModalRef.hide()">Cancel</button>
+                <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" [disabled]="isdeletedfeed" (click)="deleteFeedItem(feed.feedItemId)">Delete</button>
+              </div>
+            </ng-template>
+            <!--Delete Feed Model Ends-->
+  
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <p class="contentBox" >
+        <!-- yogesh commits -->
+        <!-- <a href="/authverifly?route=overview/working-at-Cogent-Data-Solutions-Llc-A248769" target="_blank" style="color:blue;" contenteditable="false" value="39433"><b> with taget blank </b></a> -->
+        <!-- <a routerLink="/overview/working-at-Cogent-Data-Solutions-Llc-A248769" target="_blank" style="color:blue;" contenteditable="false" value="39433"><b> with taget blank </b></a> -->
+        <!-- <span *ngIf="feed?.postDescription" id="postDesc" [innerHTML]="showMore ? feed.postDescription : returnPostDescription(feed.postDescription) ">
+        </span> -->
+        <ng-template [ngIf]="feed.postDescription?.length > 0">
+          <quill-editor 
+          [modules]="quillConfig" 
+          readOnly="true" 
+          [ngModel]="showMore ? feed.postDescription : returnPostDescription(feed.postDescription)"
+          placeholder=""
+          (onEditorCreated)="onEditorCreated($event)"
+          (onEditorChanged)="onEditorChanged($event)"
+          id="testing"
+          ></quill-editor>
+          <!-- <div [innerHTML]="returnPostDescription(feed.postDescription)"></div> -->
+        </ng-template>
+      
+        <span *ngFor="let tag of tagsUsed; let t = index" class="m-1 pointer hashtagstyle" (click)="loadHashtagProfile(tag.hashTagName)"><b>{{tag.hashTagName}}</b></span>
+        <!-- <span *ngIf="(feed.postDescription && checkPostDescriptionLength(feed.postDescription)) && !showMore"> ...</span> -->
+       
+        <!-- <span class="blue font-weight-bold">#bestjob </span>
+        <span class="blue font-weight-bold">#gradsiren </span>
+        <span class="blue font-weight-bold">#gradsirenbestjob </span>
+        <span class="blue font-weight-bold">#firstjob </span>
+        <span class="blue font-weight-bold">#gradsirenservice </span> -->
+      </p>
+      <div *ngIf="(feed.postDescription && checkPostDescriptionLength(feed.postDescription)) && !showMore" (click)="showMore=true">
+        <span class="btn btn-link btn-sm" style="cursor: pointer;">Show more</span>
+      </div>
+      <div *ngIf="showMore"(click)="showMore=false" style="clear:both" > <span class="btn btn-link btn-sm"  >Show less</span></div>
+      <!-- <div class="w-100" *ngIf="feed.encodedfilePath">
+        <img class="img-fluid w-100"
+        [src]="snack.getJsImage(feed.encodedfilePath, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')">
+      </div> -->
+      <div class="w-100" *ngIf="feed.encodedFilePath && feed.fileType === 'Image'">
+        <img class="img-fluid w-100" role="button" (click)="enlargeImage(feed?.encodedFilePath)" alt="Feed Image"
+          [lazyLoad]="snack.getJsImage(feed.encodedFilePath, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')" 
+          errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs">
+      </div>
+      <div class="w-100" *ngIf="feed?.videoLink">
+        <iframe width="100%" height="100%" [src]="feed?.videoLink" frameborder="0" title="My summary video" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="height_250px" ></iframe>
+      </div>
+      <div class="w-100 overlay-container" *ngIf="feed.encodedFileImagePaths && feed.encodedFileImagePaths.length > 0" role="button" (click)="enlargeDoc(feed.encodedFileImagePaths,feed.feedItemId,$event?.target.localName)">
+        <carousel>
+          <slide *ngFor="let img of feed.encodedFileImagePaths" role="button">
+            <img [lazyLoad]="snack.getJsImage(img, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+              errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs"
+              alt="first slide"
+              style="display: block; width: 100%;">
+          </slide>
+        </carousel>
+      </div>
+      <!-- Shared Feed Data starts -->
+      <div class="m-3 border br-10 p-2 bg-light" *ngIf="feed.sharedFeedOn && feed.sharedFeedOn !== null">
+        <div class="d-flex">
+          <div class="avatarImgDiv pointer" *ngIf="feed.sharedFeedOn?.companyDTO" [routerLink]="['/gs/', feed.sharedFeedOn?.owner.publicUrl]">
+            <img class="img-fluid rounded-circle" alt="User Pic" [lazyLoad]="snack.getJsImage(feed.sharedFeedOn?.companyDTO.companyLogoPath, 'assets/img/internship-default.png')" 
+            errorImage="assets/img/default-user.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+          <div class="avatarImgDiv pointer" *ngIf="!feed.sharedFeedOn?.companyDTO" [routerLink]="['/gs/', feed.sharedFeedOn?.owner?.publicUrl]">
+            <img class="img-fluid rounded-circle" alt="User Pic" [lazyLoad]="snack.getJsImage(feed.sharedFeedOn?.owner?.profileImgPath, 'assets/img/default-user.png')" 
+            errorImage="assets/img/default-user.png">
+            <!-- [src]="feed.profileImgPath ? feed.profileImgPath : 'assets/img/default-user.png'" -->
+          </div>
+          <div class="align-self-center" *ngIf="!feed.sharedFeedOn?.companyDTO">
+            <p *ngIf="feed.sharedFeedOn?.owner" class="ml-3 my-0"><b><span class="pointer" [routerLink]="['/gs/', feed.sharedFeedOn?.owner?.publicUrl]">
+              {{feed.sharedFeedOn?.owner.firstName | titlecase }} {{feed.sharedFeedOn?.owner.middleName | titlecase }} {{feed.sharedFeedOn?.owner.lastName | titlecase }}
+            </span> • <small class="text-muted">{{feed.sharedFeedOn?.updatedOn | date}}</small></b></p>
+            <p *ngIf="feed.sharedFeedOn?.owner" class="ml-3 my-0 text-muted jsgroupheadline" title="{{feed.sharedFeedOn?.owner.currentDesignation ? feed.sharedFeedOn?.owner?.currentDesignation : feed.sharedFeedOn?.owner?.profileTitle}}">{{feed.sharedFeedOn?.owner.currentDesignation ? feed.sharedFeedOn?.owner.currentDesignation : feed.sharedFeedOn?.owner.profileTitle  |slice :0:60 }}</p>
+          </div>
+          <div class="align-self-center" *ngIf="feed.sharedFeedOn?.companyDTO">
+            <p class="ml-3 my-0" *ngIf="!feed.sharedFeedOn?.companyDTO?.internship"
+            routerLink="/overview/working-at-{{feed.sharedFeedOn?.companyDTO?.redirectUrl}}-{{feed?.sharedFeedOn?.companyDTO?.companyUniqueId}}"
+            ><b><span class="pointer">
+              {{feed.sharedFeedOn?.companyDTO.companyName | titlecase }}
+            </span> • <small class="text-muted">{{feed.sharedFeedOn?.updatedOn | date}}</small></b></p>
+            <p *ngIf="feed.sharedFeedOn?.companyDTO?.internship" class="ml-3 my-0"
+            routerLink="/internship-overview/working-at-{{feed.sharedFeedOn?.companyDTO?.redirectUrl}}-overview-{{feed?.sharedFeedOn?.companyDTO?.companyUniqueId}}"
+            ><b><span class="pointer">
+              {{feed.sharedFeedOn?.companyDTO.companyName | titlecase }}
+            </span> • <small class="text-muted">{{feed.sharedFeedOn?.updatedOn | date}}</small></b></p>
+            <p *ngIf="feed.sharedFeedOn?.owner" class="ml-3 my-0 text-muted">{{feed?.sharedFeedOn?.companyDTO?.followersCount }} {{feed?.sharedFeedOn?.companyDTO?.followersCount > 1 ? 'followers' : 'follower' }}</p>
+          </div>
+        </div>
+        <p class="p-3">
+  
+          <!-- <span *ngIf="feed.sharedFeedOn?.postDescription" 
+          [innerHTML]="shareFeedShowMore ? feed.sharedFeedOn?.postDescription : returnPostDescription(feed.sharedFeedOn?.postDescription) ">
+          </span> -->
+  
+        <ng-template [ngIf]="feed.sharedFeedOn?.postDescription">
+          <quill-editor 
+          [modules]="quillConfig" 
+          readOnly="true" 
+          [ngModel]="shareFeedShowMore ? feed.sharedFeedOn?.postDescription : returnPostDescription(feed.sharedFeedOn?.postDescription)"
+          placeholder=""
+          (onEditorCreated)="onEditorCreated($event)"
+          (onEditorChanged)="onEditorChanged($event)"
+          ></quill-editor>
+        </ng-template>
+  
+          <span *ngFor="let tag of sharedFeedTags; let t = index" class="hashtagstyle m-1 pointer" (click)="loadHashtagProfile(tag.hashTagName)"><b>{{tag.hashTagName}}</b></span>
+          <!-- <span *ngIf="(feed.sharedFeedOn?.postDescription && checkPostDescriptionLength(feed.sharedFeedOn?.postDescription) ) && !shareFeedShowMore"> ...</span> -->
+          
+        </p>
+        <div *ngIf="(feed.sharedFeedOn?.postDescription && checkPostDescriptionLength(feed.sharedFeedOn?.postDescription) ) && !shareFeedShowMore" (click)="shareFeedShowMore = true">
+          <span class="btn btn-link btn-sm" style="cursor: pointer;">Show more</span>
+        </div>
+        <div  *ngIf="shareFeedShowMore" (click)="shareFeedShowMore = false"  style="clear:both">
+          <span class="btn btn-link btn-sm"  >Show less</span>
+        </div>
+        <div class="w-100" *ngIf="feed.sharedFeedOn?.encodedFilePath && feed.sharedFeedOn?.fileType === 'Image'">
+          <img class="img-fluid w-100" role="button" (click)="enlargeImage(feed.sharedFeedOn?.encodedFilePath)"
+            [lazyLoad]="snack.getJsImage(feed.sharedFeedOn?.encodedFilePath, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')"
+            errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs">
+        </div>
+        <div class="w-100" *ngIf="feed.sharedFeedOn?.videoLink">
+          <iframe width="100%" height="100%" [src]="feed.sharedFeedOn?.videoLink" frameborder="0" title="My summary video" class="height_250px" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        </div>
+        <div class="w-100" *ngIf="feed.sharedFeedOn?.encodedFileImagePaths && feed.sharedFeedOn?.encodedFileImagePaths.length > 0" (click)="enlargeDoc(feed.sharedFeedOn?.encodedFileImagePaths,feed?.sharedFeedOn?.feedItemId,$event?.target?.localName)">
+          <carousel>
+            <slide *ngFor="let img of feed.sharedFeedOn?.encodedFileImagePaths" role="button">
+              <img [lazyLoad]="snack.getJsImage(img, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')" 
+                errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs"
+                alt="first slide"
+                style="display: block; width: 100%;">
+            </slide>
+          </carousel>
+        </div>
+      </div>
+      <!-- Shared Feed Data Ends -->
+      <div class="d-flex" *ngIf=" (feed.likesCount > 0) || (feed.commentsCount > 0) || (feed.sharedCount > 0)" style="clear:both">
+        <div class="col-4 col-md-6" *ngIf="feed.likesCount > 0">
+          <p><a (click)="showWholikedModal(showwholikedpost, 'LIKE')"><span class="">{{feed.likesCount}}</span> {{feed.likesCount === 1 ? 'Like' : 'Likes'}}</a></p>
+        </div>
+        <div class="col-4 col-md-6" *ngIf="feed.likesCount == 0">
+          <p><span class="gradsuccess"></span></p>
+        </div>
+        <div class="col-8 col-md-6 text-right" *ngIf="(feed.commentsCount > 0) || (feed.sharedCount > 0)">
+          <p *ngIf="(feed.commentsCount > 0) || (feed.sharedCount > 0)" >
+         <a (click)="viewFeedComments(feed)"><span class="" *ngIf="feed.commentsCount > 0 && (feed.commentsVisiblity !== 'none' || (feed.commentsVisiblity === 'connection' && feed.userConnectedWithOwner === true) )">{{feed.commentsCount}}</span>
+            <span *ngIf="feed.commentsCount > 0 && (feed.commentsVisiblity !== 'none' || (feed.commentsVisiblity === 'connection' && feed.userConnectedWithOwner === true) )"> {{feed.commentsCount === 1 ? 'Comment' : 'Comments'}}</span></a>
+         <a (click)="showWholikedModal(showwholikedpost, 'SHARE')"><span *ngIf="feed.commentsCount > 0 && feed.sharedCount > 0"> | </span>
+            <span *ngIf="feed.sharedCount > 0" class="">{{feed.sharedCount}}</span>
+            <span *ngIf="feed.sharedCount > 0"> {{feed.sharedCount === 1 ? 'Share' : 'Shares'}}</span></a></p>
+        </div>
+      </div>
+      <div class="d-flex card-actions">
+        <div class="p-3 mr-2 pointer" (click)="likePost(feed)" >
+          <i class="fa fa-lg fa-thumbs-up" *ngIf="feed?.postLiked" aria-hidden="true"></i> 
+          <i class="fa fa-lg fa-thumbs-o-up" *ngIf="!feed?.postLiked" aria-hidden="true"></i> Like
+        </div>
+        <div class="p-3 mr-2 pointer" (click)="viewFeedComments(feed)" >
+          <i class="fa fa-lg fa-comments gradprimary" aria-hidden="true"></i> Comment
+        </div>
+        <!-- <div class="p-3 pointer" *ngIf="!companyFeeds" (click)="sharePost(feed)" >
+          <i class="fa fa-lg fa-share gradsuccess" aria-hidden="true"></i> Share
+        </div> -->
+        <!-- need to show the share btn -->
+        <div class="p-3 pointer"  (click)="sharePost(feed)" >
+          <i class="fa fa-lg fa-share gradsuccess" aria-hidden="true"></i> Share
+        </div>
+      </div>
+      <div class="d-flex p-1 pl-2" *ngIf="feed.commentsVisiblity === 'none' || (feed.commentsVisiblity === 'connection' && feed.userConnectedWithOwner === false) ">
+        <!-- Comments turned off -->
+        Comments have been restricted
+      </div>
+      <div class="comment-rply" *ngIf="feed.openComment">
+        <div class="d-flex p-3 border-top" *ngIf="!feed.editComment" >
+          <div *ngIf="isFeedComponent ;else notFeedComponent" class="mr-1 avatarImgDiv">
+              <img class="img-fluid rounded-circle" alt="User Pic" [src]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')"
+              errorImage="assets/img/default-user.png"> 
+          </div>
+          <ng-template #notFeedComponent>
+            <div *ngIf="feed?.companyDTO && isUserAdminInInternshipPage" class="mr-1 avatarImgDiv 2">
+              <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle 1" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+              <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle 2" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+            </div>
+              <div  class="mr-1 avatarImgDiv 3" *ngIf="feed?.companyDTO && !isUserAdminInInternshipPage">
+                <img class="img-fluid rounded-circle" alt="User Pic" [src]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')"
+                errorImage="assets/img/default-user.png"> 
+              </div>
+          </ng-template>
+          <div class="align-self-center w_91per">
+            <!-- <input type="text" [(ngModel)]="feed.comentDescription" (keyup.enter)="addComment(feed)" [ngModelOptions]="{standalone: none}" 
+             maxlength="1300" ngModel #comment="ngModel" class="border form-control rounded-pill border_radius_50rem"
+             placeholder="Add a comment...">              -->
+             <!-- <mat-form-field> -->
+            <textarea type="text" cdkAutosizeMinRows="2" cdkTextareaAutosize [(ngModel)]="feed.comentDescription" [ngModelOptions]="{standalone: none}" 
+             maxlength="1300" ngModel #comment="ngModel" class="form-control rounded-pill commentArea"
+             placeholder="Add a comment..."></textarea>
+            <!-- </mat-form-field> -->
+  
+              <button class="btn btn-primary btn-sm send-comment" (click)="addComment(feed)" style="padding: 2px 12px;margin-top: 7px;" >Send</button>
+              <div>
+                <small *ngIf ='feed.comentDescription'>{{feed.comentDescription.length}}/1300</small>
+                <small *ngIf ='!feed.comentDescription'>&nbsp;</small>
+              </div>
+          </div>
+        </div>
+       
+        <ng-container *ngIf="feed.commentsCount > 0">
+          <ng-container  *ngFor="let comment of feed.feedItemCommentVos; let commentIndex=index">
+            <div class="d-flex py-2 m-1">
+              <div *ngIf="isFeedComponent;else commentReplyBox">
+                <div class="mr-1 avatarImgDiv pointer" *ngIf="!comment?.companyDTO" routerLink="/gs/{{comment.author.publicUrl}}">
+                  <img class="img-fluid rounded-circle 1" alt="User Pic" [src]="snack.getJsImage(comment.author.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+                </div>
+                <div class="mr-1 avatarImgDiv pointer" *ngIf="comment?.companyDTO">
+                  <img class="img-fluid rounded-circle 2" alt="User Pic" [src]="snack.getJsImage(comment.companyDTO.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-user.png">
+                </div>
+              </div>
+              <ng-template #commentReplyBox>
+                <div class="mr-1 avatarImgDiv pointer" *ngIf="comment?.companyDTO">
+                  <div *ngIf="isUserAdminInInternshipPage">
+                    <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle 1" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+                  <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle 2" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+                  </div>
+                  <div *ngIf="!isUserAdminInInternshipPage">
+                    <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle" [src]="presentCompany?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+                    <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle" [src]="presentInternship?.company?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+                  </div>
+                </div>
+                <div class="mr-1 avatarImgDiv pointer" *ngIf="!comment?.companyDTO">
+                  <img class="img-fluid rounded-circle 1" alt="User Pic" [src]="snack.getJsImage(comment.author.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-company.png">
+                </div>
+              </ng-template>
+            <div class="align-self-center w_91per" style="max-width: 470px;">
+              <div class="comm-reply" *ngIf="!comment?.companyDTO">
+                <p class="my-0 text-capitalize"><strong class="pointer" routerLink="/gs/{{comment?.author?.publicUrl}}">
+                  {{comment?.author?.firstName}} {{comment.author?.middleName}} {{comment?.author?.lastName}}</strong> • 
+                  <small class="text-muted">{{comment?.updatedOn | date}}</small></p>
+                <small class="text-muted commentprofiletitle">{{comment?.author?.profileTitle}}</small>
+                <p class="my-0 commentPara">{{comment.feedItemComment}}</p>
+              </div>
+              <div class="comm-reply" *ngIf="comment?.companyDTO">
+                <p class="my-0 text-capitalize"><strong class="pointer" routerLink="{{getRedirectURL(comment, 'comment')}}">
+                  {{comment?.companyDTO?.companyName}}</strong> • 
+                  <small class="text-muted">{{comment?.updatedOn | date}}</small></p>
+                <small class="text-muted">{{comment?.companyDTO?.followersCount}} follower(s)</small>
+                <p class="my-0 commentPara">{{comment.feedItemComment}}</p>
+              </div>
+              <p class="mt-2 my-0 text-muted commentPara fw_600 pointer"><span (click)="likeComment(comment, commentIndex)">Like</span> 
+                <span *ngIf="comment.commentLikeCount > 0" (click)="showWholikedCommentModal(showWhoLikedTemplate, comment, 'COMMENT', commentIndex)"> .
+                   <i class="fa fa-sm fa-thumbs-up" aria-hidden="true" *ngIf="comment.liked"></i>
+                   <i aria-hidden="true" class="fa fa-lg fa-thumbs-o-up ng-star-inserted" *ngIf="!comment.liked"></i>
+                   {{comment.commentLikeCount}}</span> |
+                <span class="pointer" (click)="comment.openComment = !comment.openComment">Reply</span>
+                <span class="blue ml-4 pointer" *ngIf="comment.replyCommentCount > 0" 
+                  (click)="viewFeedCommentReplies(comment,commentIndex)"><u>{{comment.replyCommentCount}} {{comment.replyCommentCount ==1 ? 'Reply' : 'Replies'}}</u></span></p>
+              <ng-container *ngIf="comment.openReplies">
+                <ng-container *ngFor="let rcomment of comment.commentReplies; let replyIndex=index">
+                  <!-- <div><hr></div> -->
+                  <div class="d-flex my-2 mt-3">
+                    <div *ngIf="isFeedComponent;else replyToCommentLogo">
+                      <div class="mr-1 avatarImgDiv pointer" *ngIf="!rcomment?.companyDTO">
+                        <img class="img-fluid rounded-circle" alt="User Pic" [lazyLoad]="snack.getJsImage(rcomment.author.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+                      </div>
+                      <div class="mr-1 avatarImgDiv pointer" *ngIf="rcomment?.companyDTO" >
+                        <img class="img-fluid rounded-circle" alt="Company Logo" [lazyLoad]="snack.getJsImage(rcomment.companyDTO?.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-user.png">
+                      </div>
+                    </div>
+                    <ng-template #replyToCommentLogo>
+                      <div class="mr-1 avatarImgDiv pointer 1" *ngIf="rcomment?.companyDTO" >
+                        <div *ngIf="isUserAdminInInternshipPage">
+                          <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle 1" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+                          <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle 2" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+                        </div>
+                        <div *ngIf="!isUserAdminInInternshipPage">
+                          <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle" [src]="presentCompany?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+                          <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle" [src]="presentInternship?.company?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+                        </div>
+                      </div>
+                      <div class="mr-1 avatarImgDiv pointer 2" *ngIf="!rcomment?.companyDTO">
+                        <img  class="img-fluid rounded-circle 1" alt="User Pic" [src]="snack.getJsImage(rcomment.author.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-company.png">
+                      </div>
+                    </ng-template>
+                    <div class="align-self-center w_91per comm-reply" style="width: 426px;">
+                      <p class="my-0"><strong class="pointer" *ngIf="!rcomment?.companyDTO" routerLink="/gs/{{rcomment.author.publicUrl}}" >
+                        {{rcomment.author.firstName}} {{rcomment.author.middleName}} {{rcomment.author.lastName}}</strong>
+                        <strong class="pointer" *ngIf="rcomment?.companyDTO" routerLink="{{ getRedirectURL(rcomment, 'comment') }}" >
+                          {{rcomment.companyDTO.companyName}}</strong> • 
+                        <small class="text-muted">{{rcomment.updatedOn | date}}</small>
+                        <span *ngIf="rcomment.editReplay != true" class="float-right">
+                          <!-- <i class="fa fa-lg fa-ellipsis-h pointer" [matMenuTriggerFor]="commentMenu" aria-hidden="true"></i> -->
+                          <mat-icon style="position: absolute;margin-left: 10px;margin-top: -40px;" [matMenuTriggerFor]="commentMenu" class="pointer text-muted">more_horiz</mat-icon>
+                          <mat-menu  class="customMatMenu" #commentMenu="matMenu" xPosition="before">
+                            <button mat-menu-item *ngIf="rcomment.userType === 'OWNER' && rcomment.editReplay != true" (click)="rcomment.editReplay = true; rcomment.editContent = rcomment; rcomment.editContent.updatedDescription = rcomment.feedItemComment; rcomment['hideDelete']=true;">
+                              <mat-icon>create</mat-icon>
+                              <span>Edit</span>
+                            </button>
+                            <button mat-menu-item *ngIf="rcomment.userType === 'OWNER' && !rcomment['hideDelete'] || presentInternship?.userInternship || presentCompany?.userCompany"
+                            (click)="deleteReplyConfirmModal(delRepConfirmTemplate)">
+                              <mat-icon>delete_forever</mat-icon>
+                              <span>Delete Reply</span>
+                            </button>
+                            <button mat-menu-item *ngIf="rcomment.userType !== 'OWNER'" (click)="copyFeedLink(feed.feedItemId)">
+                              <!-- <mat-icon>create</mat-icon> -->
+                              <mat-icon>link</mat-icon>
+                              <span>Copy link</span>
+                            </button>
+                            <button mat-menu-item *ngIf="rcomment.userType !== 'OWNER'" (click)="openReportModal()">
+                              <!-- <mat-icon>delete_forever</mat-icon> -->
+                              <mat-icon>flag</mat-icon>
+                              <span>Report</span>
+                            </button>                      
+                          </mat-menu>
+                        </span>
+    
+                        <!--Delete Reply Model Starts-->
+                        <ng-template #delRepConfirmTemplate>
+                          <div class="modal-header py-0">
+                            <h5 class="m-0 modal-title pull-left py-2">Delete Reply</h5>
+                            <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="delRepModalRef.hide()">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body text-center">
+                            <p>Are you sure you want to delete your reply?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button class="btn btn-default btn-sm" (click)="delRepModalRef.hide()">Cancel</button>
+                            <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="deleteFeedItemComment(rcomment, commentIndex, 'replyComment', comment.feedItemCommentId, replyIndex)">Delete</button>
+                          </div>
+                        </ng-template>
+                        <!--Delete Reply Model Ends-->
+                      </p>
+                      <small *ngIf="!rcomment?.companyDTO" class="text-muted">{{rcomment.author.profileTitle}}</small>
+                      <small *ngIf="rcomment?.companyDTO" class="text-muted">{{rcomment.companyDTO.followersCount}} follower(s)</small>
+                      <p class="my-0 commentPara">{{rcomment.feedItemComment}}</p>
+                    </div>
+                  </div>
+  
+                  <p class="mt-1 ml-2 mb-0 text-muted commentPara fw_600 smallerFont pointer" *ngIf="comment.commentReplies"><span style="margin-left: 37px;"
+                    (click)="likeReply(rcomment, commentIndex, replyIndex)"> Like </span>
+                     <span *ngIf="rcomment.commentLikeCount > 0" (click)="showWholikedCommentModal(showWhoLikedTemplate, rcomment, 'REPLY', commentIndex, replyIndex)"> .
+                       <i class="fa fa-sm fa-thumbs-up" aria-hidden="true" *ngIf="rcomment.liked"></i> 
+                       <i aria-hidden="true" class="fa fa-lg fa-thumbs-o-up ng-star-inserted" *ngIf="!rcomment.liked"></i>
+                       {{rcomment.commentLikeCount}}</span> |
+                    <span class="pointer" (click)="comment.openComment = !comment.openComment">Reply</span>
+                  <!-- <span class="blue ml-4 pointer" *ngIf="comment.replyCommentCount > 0" (click)="viewFeedCommentReplies(comment,commentInde)"><u>{{comment.replyCommentCount}} Replies</u></span> -->
+                  </p>
+  
+                  <div class="d-flex py-3 border-top mt-2" *ngIf="rcomment.editReplay && !rcomment.openComment">
+                    <div class="mr-1 avatarImgDiv">
+                      <img class="img-fluid rounded-circle" alt="User Pic"
+                        [lazyLoad]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+                    </div>
+                    <div class="align-self-center w_91per">
+                      <input type="text" [(ngModel)]="rcomment.editContent.updatedDescription"
+                        (keyup.enter)="editReplay(rcomment, commentIndex, replyIndex)" [ngModelOptions]="{standalone: none}"
+                         maxlength="1300" style="margin-bottom: 10px;"
+                        class="border form-control rounded-pill border_radius_50rem" placeholder="Add a Reply...">                 
+                        <button class="btn btn-primary send-comment" (click)="editReplay(rcomment, commentIndex, replyIndex)" style="padding: 2px 12px;margin-top: 7px;">Update</button>
+                        <span class="btn btn-light btn-sm" (click)="rcomment.editReplay = false; rcomment.editContent = null; rcomment['hideDelete']=false;"><mat-icon>close</mat-icon></span>
+                        <small *ngIf ='rcomment.editContent.updatedDescription'>{{rcomment.editContent.updatedDescription.length}}/1300</small>
+                        <small *ngIf ='!rcomment.editContent.updatedDescription'>&nbsp;</small>
+                    </div>
+                  </div>
+  
+                </ng-container>
+              </ng-container>
+              <div class="d-flex py-3 border-top mt-2" *ngIf="comment.openComment" >
+                <div *ngIf="isFeedComponent ;else notFeedComponent" class="mr-1 avatarImgDiv">
+                  <img class="img-fluid rounded-circle" alt="User Pic" [src]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')"
+                  errorImage="assets/img/default-user.png"> 
+              </div>
+              <ng-template #notFeedComponent>
+                <div *ngIf="feed?.companyDTO && isUserAdminInInternshipPage" class="mr-1 avatarImgDiv 2">
+                  <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle 1" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+                  <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle 2" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+                </div>
+                  <div  class="mr-1 avatarImgDiv 3" *ngIf="feed?.companyDTO && !isUserAdminInInternshipPage">
+                    <img class="img-fluid rounded-circle" alt="User Pic" [src]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')"
+                    errorImage="assets/img/default-user.png"> 
+                  </div>
+              </ng-template>
+                  <div class="d-flex w-100">
+                    <div class="align-self-center w_91per mr-2">
+                      <!-- <input type="text" [(ngModel)]="comment.comentDescription" (keyup.enter)="replyToComment(comment, commentIndex)" [ngModelOptions]="{standalone: none}" maxlength="1300" class="border form-control rounded-pill w-100 border_radius_50rem"
+                        placeholder="Add Reply..."> -->
+                      <textarea type="text" [(ngModel)]="comment.comentDescription" [ngModelOptions]="{standalone: none}" maxlength="1300" class="border form-control rounded-pill w-100 commentArea"
+                        placeholder="Add Reply..." cdkAutosizeMinRows="2" cdkTextareaAutosize></textarea>
+                        <small *ngIf ='comment.comentDescription'>{{comment.comentDescription.length}}/1300</small> 
+                        <small *ngIf ='!comment.comentDescription'>&nbsp;</small>              
+                    </div>
+                    <button style="padding: 2px 12px;margin-top: 7px;" class="btn btn-primary btn-sm send-comment align-self-baseline" (click)="replyToComment(comment, commentIndex)" >Send</button>
+                  </div>
+              </div>
+              
+            </div>
+            <ng-container *ngIf="comment.editComment != true">
+              <!-- <i class="fa fa-lg fa-ellipsis-h pointer" [matMenuTriggerFor]="commentMenu" aria-hidden="true"></i> -->
+              <mat-icon class="pointer" [matMenuTriggerFor]="commentMenu">more_horiz</mat-icon>
+              <mat-menu class="customMatMenu" #commentMenu="matMenu" xPosition="before">
+                <button mat-menu-item  *ngIf="comment.userType === 'OWNER' && comment.editComment != true" (click)="comment.editComment = true; comment.editCommentContent = comment;comment.editCommentContent.updatedComment = comment.feedItemComment;comment.editCommentContent.commentIndex = commentIndex;comment['hideDelete']=true">
+                  <mat-icon>create</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <!---<button class="font-weight-bold" mat-menu-item  *ngIf="comment.userType === 'OWNER' && feed.editComment == true" (click)="feed.editComment = false; feed.editCommentContent.commentIndex = commentIndex;comment['hideDelete']=false">
+                  <mat-icon>create</mat-icon>
+                  <span>Cancel Edit</span>
+                </button> --->
+  
+                <button mat-menu-item  *ngIf="comment.userType === 'OWNER' && !comment['hideDelete'] || presentInternship?.userInternship || presentCompany?.userCompany" 
+                (click)="deletecomment = comment;deletecomment.i = i;deletecomment.j = commentIndex;deletecomment.rootId = feed.feedItemId;deleteCommentConfirmModal(delComConfirmTemplate)">
+                  <mat-icon>delete_forever</mat-icon>
+                  <span>Delete</span>
+                </button>
+                <button mat-menu-item *ngIf="comment.userType !== 'OWNER'" (click)="copyFeedLink(feed.feedItemId)">
+                  <!-- <mat-icon>create</mat-icon> -->
+                  <mat-icon>link</mat-icon>
+                  <span>Copy link</span>
+                </button>
+                <button mat-menu-item  *ngIf="comment.userType !== 'OWNER'" (click)="openReportModal()">
+                  <!-- <mat-icon>delete_forever</mat-icon> -->
+                  <mat-icon>flag</mat-icon>
+                  <span>Report</span>
+                </button>
+              </mat-menu>
+            </ng-container>
+         
+          <!--Delete Comment Model Starts-->
+          <ng-template #delComConfirmTemplate>
+            <div class="modal-header py-0">
+              <h5 class="m-0 modal-title pull-left py-2">Delete Comment</h5>
+              <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="delComModalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body text-center">
+              <p>Are you sure you want to delete your comment?</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" (click)="delComModalRef.hide()">Cancel</button>
+              <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="deleteFeedItemComment(comment, commentIndex, 'rootComment', feed.feedItemId)">Delete</button>
+            </div>
+          </ng-template>
+          <!--Delete Comment Model Ends-->
+  
+            </div>
+          <div class="d-flex p-3 border-top" *ngIf="comment.editComment" >
+            <div class="mr-1 avatarImgDiv" *ngIf="!comment.companyDTO">
+              <img class="img-fluid rounded-circle" alt="User Pic"
+                [lazyLoad]="snack.getJsImage((notifications.userdata.asObservable() | async)?.userDetailsVo.encodedImagePath, 'assets/img/default-user.png')" errorImage="assets/img/default-user.png">
+            </div>
+            <div class="mr-1 avatarImgDiv" *ngIf="comment.companyDTO">
+              <img class="img-fluid rounded-circle" alt="Internship Logo"
+                [lazyLoad]="snack.getJsImage(comment.companyDTO.companyLogoPath, 'assets/img/internship-default.png')" errorImage="assets/img/internship-default.png">
+            </div>
+            <div class="align-self-center w_91per">
+             <input type="text" [(ngModel)]="comment.editCommentContent.updatedComment" (keyup.enter)="editComment(comment,commentIndex)"
+                [ngModelOptions]="{standalone: none}" maxlength="1300" class="border form-control rounded-pill border_radius_50rem"
+                placeholder="Edit a comment...">            
+                <button class="btn btn-primary send-comment mt-2" (click)="editComment(comment,commentIndex)" >update</button>
+                <span (click)="comment.editComment = false; comment.editCommentContent = null; comment['hideDelete']=false" class="btn btn-light btn-sm mt-2"><mat-icon>close</mat-icon></span>
+                <small class="mt-2" *ngIf ='comment.editCommentContent.updatedComment'>{{comment.editCommentContent.updatedComment.length}}/1300</small>
+                <small *ngIf ='!comment.editCommentContent.updatedComment'>&nbsp;</small>
+            </div>
+          </div>
+  
+         </ng-container>
+        </ng-container>
+  
+        <button class="btn rounded-pill py-0 bg-light smallerFont m-2" *ngIf="feed.commentsCount > 2 && (feed.commentsCount !== feed.feedItemCommentVos.length)" (click)="loadMoreFeedComments(feed)">Load more</button>
+  
+      </div>
+      
+    </div>
+    </div>
+  
+  <!--Show who Liked Model Starts-->
+  <ng-template #showWhoLikedTemplate>
+    <div class="modal-header py-0">
+      <!-- <h5 class="m-0 modal-title pull-left py-2">Members who {{ isSharedList ? 'Shared' : 'Liked'}} this post <span *ngIf="isLastTextInModal">{{ (isCommentLikedList && !isSharedList) ? 'Comment' : 'Reply'}}</span></h5> -->
+      <h5 class="m-0 modal-title pull-left py-2">{{ (isCommentLikedList && !isSharedList) ? 'Your' : 'This'}} comment was {{ isSharedList ? 'Shared' : 'Liked'}} by {{postActivityMembers.length}} <span *ngIf="postActivityMembers.length>1">members</span> <span *ngIf="postActivityMembers.length == 1">member</span></h5>
+      <!-- <h5 class="m-0 modal-title pull-left py-2">><span *ngIf="feed.likesCount>=1">Members who {{ isSharedList ? 'Shared' : 'Liked'}} this post</span></h5> -->
+      <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="showWholikedModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <!-- <div class="modal-body text-center">
+      <p>Are you sure you want to delete your comment?</p>
+    </div> -->
+    <div class="card-body px-0" *ngIf="!loaderInPostActivityModal">
+      <div class="d-flex pl-3 no-gutters" *ngFor="let member of postActivityMembers; let last = last;">
+        <div class="align-self-center col-3 col-md-2 tc">
+          <div *ngIf="isFeedComponent;else comapanyOrInternshipLogo1">
+            <div class="m-auto pointer avatarImgDiv" style="width: 70px;height: 85px;" routerLink="/gs/{{member.publicUrl}}" (click)="showWholikedModalRef.hide()">
+              <div *ngIf="!member.companyDTO">
+                <img class="img-fluid rounded-circle 1" alt="User Pic"  [lazyLoad]="snack.getJsImage(member.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/emp-avatar.png">
+              </div>
+              <div *ngIf="member.companyDTO">
+              <img class="img-fluid rounded-circle 2222" alt="Company Logo" [lazyLoad]="snack.getJsImage(member.companyDTO.companyLogoPath, 'assets/img/default-comapny.png')" errorImage="assets/img/default-company.png">
+              </div>
+            </div>
+          </div>
+          <ng-template #comapanyOrInternshipLogo1>
+            <div *ngIf="isUserAdminInInternshipPage" class="mr-1 avatarImgDiv pointer" style="width: 70px;height: 85px;">
+             <div *ngIf="member.companyDTO">
+              <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle 31" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+              <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle 41" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+             </div>
+             <div *ngIf="!member.companyDTO">
+              <img  class="img-fluid rounded-circle 31" alt="User Pic" [src]="snack.getJsImage(member.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-company.png">
+             </div>
+            </div>
+            <div *ngIf="!isUserAdminInInternshipPage" class="mr-1 avatarImgDiv" style="width: 70px;height: 85px;">
+              <div  *ngIf="member.companyDTO">
+                <img *ngIf="presentCompany" alt="Company Logo" class="img-fluid rounded-circle" [src]="presentCompany?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+                <img *ngIf="presentInternship" alt="Internship Logo" class="img-fluid rounded-circle" [src]="presentInternship?.company?.imagepurity === 'CONFIRMED' ? snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png'): 'assets/img/default-company.png'" errorImage="assets/img/default-user.png">
+              </div>
+              <div *ngIf="!member.companyDTO">
+                <img  class="img-fluid rounded-circle 31" alt="User Pic" [src]="snack.getJsImage(member.profileImgPath, 'assets/img/default-user.png')" errorImage="assets/img/default-company.png">
+               </div>
+            </div>
+          </ng-template>
+        </div>
+        <div class="col-9 col-md-10 pb-3" [ngClass]="{'border-bottom mb-3' : !last}">
+          <p class="bold text-capitalize pointer" routerLink="/gs/{{member.publicUrl}}"
+          *ngIf="member?.companyDTO == null" (click)="showWholikedModalRef.hide()" >{{member.firstName}} {{member.middleName}} {{member.lastName}}</p>
+          <p class="smallerFont m-0 text-muted" *ngIf="member?.companyDTO == null">{{ member.profileTitle}}</p>
+          <p class="bold text-capitalize pointer" routerLink="/overview/working-at-{{member?.companyDTO?.redirectUrl}}-{{member?.companyDTO?.companyUniqueId}}" 
+          *ngIf="member?.companyDTO != null" (click)="showWholikedModalRef.hide()" >{{member?.companyDTO?.companyName}}</p>
+          <p class="smallerFont m-0 text-muted" *ngIf="member?.companyDTO != null">{{ member?.companyDTO?.followersCount}} followers</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body px-0 ml-4" *ngIf="loaderInPostActivityModal">
+      Loading...
+    </div>
+    <!-- <div class="modal-footer">
+      <button class="btn btn-default btn-sm" (click)="showWholikedModalRef.hide()">Cancel</button>
+      <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="deleteFeedItemComment(comment, commentIndex, 'rootComment', feed.feedItemId)">Delete</button>
+    </div> -->
+  </ng-template>
+  
+  
+  <!--Show who Liked Model Starts-->
+  <ng-template #showwholikedpost>
+    <div class="modal-header py-0">
+      <h5 class="m-0 modal-title pull-left py-2">Users who {{ isSharedList ? 'Shared' : 'Liked'}} this post <span *ngIf="isLastTextInModal">{{ (isCommentLikedList && !isSharedList) ? 'Comment' : 'Reply'}}</span></h5>
+      <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="showWholikedModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <!-- <div class="modal-body text-center">
+      <p>Are you sure you want to delete your comment?</p>
+    </div> -->
+    <div class="card-body px-3 px-md-0" *ngIf="!loaderInPostActivityModal">
+      <div class="d-flex no-gutters" *ngFor="let member of postActivityMembers; let last = last;">
+        <div class="align-self-center col-3 col-md-2 tc mr-2 ml-2">
+          <div class="m-auto pointer post-act-thmb" routerLink="/gs/{{member.publicUrl}}"
+          *ngIf="!member.companyDTO" (click)="showWholikedModalRef.hide()">
+            <img class="img-fluid rounded-circle 1" alt="User Pic" [lazyLoad]="snack.getJsImage(member.profileImgPath, 'assets/img/emp-avatar.png')" errorImage="assets/img/emp-avatar.png">
+          </div>
+          <div class="m-auto pointer post-act-thmb" *ngIf="member.companyDTO" 
+          routerLink="/overview/working-at-{{member?.companyDTO?.redirectUrl}}-{{member?.companyDTO?.companyUniqueId}}" (click)="showWholikedModalRef.hide()">
+            <img *ngIf="!presentInternship && !presentCompany" alt="Company Logo" class="img-fluid rounded-circle 2" [lazyLoad]="snack.getJsImage(member.companyDTO?.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/emp-avatar.png">
+           <img *ngIf="presentCompany" class="img-fluid rounded-circle 3" alt="Company Logo" [src]="snack.getJsImage(presentCompany.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+            <img *ngIf="presentInternship" class="img-fluid rounded-circle 4" alt="Internship Logo" [src]="snack.getJsImage(presentInternship.companyLogoPath, 'assets/img/default-company.png')" errorImage="assets/img/default-company.png">
+          </div>
+        </div>
+        <div class="col-9 col-md-10 pb-0 pb-md-3 pr-3 pr-md-0" [ngClass]="{'mb-3' : !last}">
+          <p class="bold text-capitalize pointer" routerLink="/gs/{{member.publicUrl}}"
+          *ngIf="member?.companyDTO == null" (click)="showWholikedModalRef.hide()" style="max-width: 350px;">{{member.firstName}} {{member.middleName}} {{member.lastName}}</p>
+          <p class="smallerFont m-0 text-muted" *ngIf="member?.companyDTO == null">{{ member.profileTitle}}</p>
+          <p class="bold text-capitalize pointer" routerLink="/overview/working-at-{{member?.companyDTO?.redirectUrl}}-{{member?.companyDTO?.companyUniqueId}}" 
+          *ngIf="member?.companyDTO != null" (click)="showWholikedModalRef.hide()" >{{member?.companyDTO?.companyName}}</p>
+          <p class="smallerFont m-0 text-muted" *ngIf="member?.companyDTO != null">{{ member?.companyDTO?.followersCount}} followers</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body px-0 ml-4" *ngIf="loaderInPostActivityModal">
+      Loading...
+    </div>
+    <!-- <div class="modal-footer">
+      <button class="btn btn-default btn-sm" (click)="showWholikedModalRef.hide()">Cancel</button>
+      <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="deleteFeedItemComment(comment, commentIndex, 'rootComment', feed.feedItemId)">Delete</button>
+    </div> -->
+  </ng-template>
+  <!--Show who Liked Model Ends-->
+  
+  <!-- Who can see Comment Model Starts-->
+  <ng-template #whoCanCommentTemplate>
+    <div class="popup1">
+      <div class="modal-header py-0">
+        <h5 class="m-0 modal-title pull-left py-2">Who can comment your post?</h5>
+        <button type="button" class="close pull-right pt-4" aria-label="Close" (click)="whoCanCommentValue = 'anyone';whoCanCommentOnPostModalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body popupSiZe">
+        <!-- <p class="mb-3">Your post will be visible on feed in search results</p> -->
+        <ul>
+          <li role="menuitem" (click)="whoCanCommentValue = 'anyone'" class="my-1 border-bottom"><a class="dropdown-item" [ngStyle]="{'background-color': whoCanCommentValue == 'anyone'?'#E8E8E8':''}">
+            <span class="material-icons-outlined align-bottom mr-1">public</span>
+            <span><b>Anyone </b> <br/>Anyone can comment</span>
+          </a></li>
+          <li role="menuitem" (click)="whoCanCommentValue = 'connection'" class="my-1 border-bottom"><a class="dropdown-item" [ngStyle]="{'background-color': whoCanCommentValue == 'connection'?'#E8E8E8':''}">
+            <span class="material-icons-outlined align-bottom mr-1">group</span>
+            <span><b>Connections </b><br/>Connections who can view can also comment</span>
+          </a></li>
+          <li role="menuitem" (click)="whoCanCommentValue = 'none'" class="my-1">
+            <a class="dropdown-item" [ngStyle]="{'background-color': whoCanCommentValue == 'none'?'#E8E8E8':''}">
+              <span class="material-icons-outlined align-bottom mr-1">speaker_notes_off</span> 
+              <span><b>None</b> <br/>No one can comment</span>
+            </a></li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default btn-sm" (click)="whoCanCommentValue = 'anyone';whoCanCommentOnPostModalRef.hide()">Back</button>
+        <button class="btn btn-gradprimary btn-sm px-3 rounded-pill" (click)="whoCanCommentOnPostModalRef.hide();changewhoCanComment(feed);">Save</button>
+      </div>
+    </div>
+    </ng-template>
+  <!-- Who can see Comment Model Ends-->
+  
+  </div>
+  
+  <ng-template #imgDialog let-data>
+    <div class="img-dialog">
+      <img [lazyLoad]="snack.getJsImage(data.imagePath)" alt="Image">
+    </div>
+  </ng-template>
+  
+  <ng-template #docDialog let-data>
+    <div>
+      <div style="text-align:end">
+       <button class="btn btn-default" (click)="downloadDoc(data.feedItemId)"><mat-icon>save_alt</mat-icon></button>&nbsp;
+       <button class="btn btn-default" (click)="(dialogRef && dialogRef.close())"><mat-icon>close</mat-icon></button>
+      </div>
+      <carousel>
+        <slide *ngFor="let img of data.imagePaths">
+          <div class="overlay">
+            <img class="carousel-img"
+            [lazyLoad]="snack.getJsImage(img, 'https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs')" 
+            errorImage="https://media-exp1.licdn.com/dms/image/C4D22AQEW-UmQ5baQQg/feedshare-shrink_1280-alternative/0/1605879796784?e=1613001600&v=beta&t=F7hdfRJHyFoHua9v3EGMNrSRxxXLdRTr8ZAFbCtiCRs" 
+            alt="first slide"
+            style="display: block; width: 100%;">
+  
+          </div>
+        </slide>
+      </carousel>
+    </div>
+  </ng-template>

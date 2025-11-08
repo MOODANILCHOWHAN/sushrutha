@@ -1,0 +1,37 @@
+<div class=" col-12 jobs-group">
+    @for(i of jobsList; track i){
+    <section class="col-11 jobs-section" >
+      <div class="col-9  job-detail">
+        <div>
+          <img [src]="i.image ? i.image:'assets/Home/calendar.png'" style="width: 3rem; height: 3rem;">
+        </div>
+        <div>
+            <span class="text-bolder">{{i.jobName}}</span>
+            <br>
+            <span class="text-bold">{{i.company}}</span>
+            <br>
+            <div class="details">
+              <div class="d-flex align-items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">location_on</span>
+                <span>{{i.location}}</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">schedule</span>
+                <span>{{i.jobType}}</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <span class="material-symbols-outlined" style="font-size: 1rem; color:#00B074 ;">work_history</span>
+                <span>{{i.jobExperience < 2 ? 'Fresher' : 'Experience' }}</span>
+              </div>
+            </div>
+            
+        </div>
+      </div>
+      <div class=" job-detail apply">
+        <button  class="pointer">Apply now</button>
+        
+        <span>{{i.createdAt | daysAgo}}</span>
+      </div>
+    </section>
+    }
+  </div>

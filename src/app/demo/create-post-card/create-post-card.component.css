@@ -1,0 +1,11 @@
+.posthead{
+    background-color: #2d548e;
+    color: #fff;
+  }
+  .postclear{
+    margin: 8px 0px;
+    cursor: pointer;
+  }
+  ::ng-deep .model-post{
+    max-width: 410px !important;
+  }

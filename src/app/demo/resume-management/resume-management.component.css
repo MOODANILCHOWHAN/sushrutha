@@ -1,0 +1,77 @@
+@import "./src/assets/styles/partials";
+
+.ResumeManagment {
+    // background-color: #eaedf1;
+    // margin: 0 auto;
+    // min-height: 450px;
+    // padding-top: 20px;
+    border-radius: 10px;
+    h1 {
+        font-size: 1.2em;
+    }
+    .single-res {
+        background-color: #e6effb;
+        padding: 10px;
+        border-radius: 7px;
+        margin-bottom: 15px;
+        span {
+            font-size: 13px;
+            vertical-align: middle;
+            margin-top: 5px;
+        }
+        .res-icons {
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            margin: 0px 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s all;
+            &:hover {
+                background-color: #b0deff;
+            }
+        }
+    }
+    .guidelines {
+        p {
+            font-size: 13px;
+            margin:5px 0;
+        }
+    }
+}
+
+.card-mb-screen{
+    display: flex;
+    justify-content:space-between;
+    @include mQ(500px){
+        flex-direction: column;
+        row-gap:0.25rem;
+    }
+}
+.card-body {
+    .resumeTitle {
+        @include textellipsis(395px);
+        @include mQ(500px){
+            display: block;
+            @include textellipsis(100px);
+        }
+    }
+    .res-icons {
+        background-color: white;
+        border-radius: 50%;
+        margin: 0px 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s all;
+        padding: 5px;
+        @include mQ(500px) {
+            font-size: 12px;
+            padding: 3px;
+            margin: 0px 2px;
+        }
+    }
+}
+
+.cvtitle{
+    max-width: 207px !important;
+}

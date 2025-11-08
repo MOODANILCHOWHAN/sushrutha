@@ -1,0 +1,214 @@
+<div class="container-fluid feedMasterPage">
+    <div class="row rightMenu">
+      <div class="col-md-12 p-0 mb-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex">
+              <div
+                class="avatarImgDiv pointer"
+                routerLink="/gs/{{
+                  (notifications.userdata.asObservable() | async)?.userDetailsVo
+                    .portfolioId
+                }}"
+              >
+                <img
+                  class="img-fluid rounded-circle"
+                  [src]="
+                    snack.getJsImage(
+                      (notifications.userdata.asObservable() | async)
+                        ?.userDetailsVo.encodedImagePath,
+                      'assets/img/default-user.png'
+                    )
+                  "
+                  alt="User Logo"
+                  errorImage="assets/img/default-user.png"
+                />
+              </div>
+              <div
+                class="align-self-center pointer"
+                (click)="createPost()"
+              >
+                <h5 class="ml-3">What do you want to talk about?</h5>
+              </div>
+              <div class="align-self-center ml-auto">
+                <i
+                  class="fa fa-2x fa-pencil text-success pointer"
+                  (click)="createPost()"
+                  aria-hidden="true"
+                ></i>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <div class="row no-gutters">
+              <div class="col-12 col-md-6">
+                <p class="mb-4 mb-md-0">
+                  Create your projects in
+                  <a (click)="addeportfolioproject()"
+                    ><strong class="gradsuccess eport">ePortfolio</strong></a
+                  >
+                </p>
+              </div>
+              <div class="col-12 col-md-6 justify-content-between d-inline-flex">
+                <button class="btn btn-sm btn-lightBlue rounded-pill" (click)="createPost('photo')">
+                  <img class="mb-1 mr-1" alt="Photo" width="14px" height="14px" src="assets/img/jobseeker/picture.svg" draggable="false">&nbsp; Photo
+                </button>
+                <button class="btn btn-sm btn-lightBlue rounded-pill" (click)=" createPost('video')" >
+                  <img class="mb-1 mr-1" alt="Video" width="20px" height="14px" src="assets/img/jobseeker/video.svg" draggable="false">&nbsp; Video
+                </button>
+                <button class="btn btn-sm btn-lightBlue rounded-pill" (click)="createPost('file')">
+                  <img class="mb-1 mr-1" alt="Files" width="14px" height="14px" src="assets/img/jobseeker/files.svg" draggable="false">&nbsp; Files
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sortBy">
+          <div class="pl-1">
+            <span>Filter by:</span>
+            <button
+              class="btn btn-sm btn-default"
+              [matMenuTriggerFor]="menu"
+              style="font-size: 14px !important"
+            >
+              {{
+                feedTypeSelected == "Recommend"
+                  ? "All (Recommended)"
+                  : feedTypeSelected == "Network"
+                  ? "My Network"
+                  : feedTypeSelected == "Posts"
+                  ? "My Posts"
+                  : feedTypeSelected
+              }}
+              <i class="fa fa-caret-down" aria-hidden="true"></i>
+            </button>
+            <hr />
+          </div>
+          <mat-menu class="sortByMenu" #menu="matMenu" xPosition="after">
+            <button
+              [ngClass]="{ active: feedTypeSelected === 'Recommend' }"
+              mat-menu-item
+              (click)="filterByOptions('Recommend')"
+            >
+              All (Recommended)
+            </button>
+            <button
+              [ngClass]="{ active: feedTypeSelected === 'Network' }"
+              mat-menu-item
+              (click)="filterByOptions('Network')"
+            >
+              My Network
+            </button>
+            <button
+              [ngClass]="{ active: feedTypeSelected === 'Groups' }"
+              mat-menu-item
+              (click)="filterByOptions('Groups')"
+            >
+              Groups
+            </button>
+            <!-- <button [ngClass]="{'active' : feedTypeSelected === 'jobs' }" mat-menu-item (click) ='filterByOptions("jobs")'>Jobs</button> -->
+            <button
+              [ngClass]="{ active: feedTypeSelected === 'Posts' }"
+              mat-menu-item
+              (click)="filterByOptions('Posts')"
+            >
+              My Posts
+            </button>
+            <!-- <button [ngClass]="{'active' : feedTypeSelected === 'Posts' }" mat-menu-item (click) ='filterByOptions("Posts")'>Jobs & Career</button> -->
+          </mat-menu>
+        </div>
+        <div class="mt-2" *ngIf="feedItems && feedItems.length > 0">
+          <single-post-card
+            (feedChanged)="refreshFeed()"
+            (deleteTheFeed)="spliceFeedItem($event)"
+            (editTheFeed)="editFeedItem($event, singleFeedIndex)"
+            (shareTheFeed)="shareFeedItem($event, singleFeedIndex)"
+            *ngFor="let singleFeed of feedItems; let singleFeedIndex = index"
+            [feedItem]="singleFeed"
+            [presentFeedIndex]="singleFeedIndex"
+          >
+          </single-post-card>
+        </div>
+        <div class="mb-3" style="padding: 15px 0;" *ngIf="feedData">
+          <all-loaders></all-loaders>
+        </div>
+  
+         <div class="mb-3" style="padding: 15px 0;text-align: center;padding-top: 0px;" *ngIf="nofeeds && feedItems.length > 0">
+          Your feed has reached it's end.
+        </div> 
+        <div
+          class="col-md-12 my-3 p-0"
+          *ngIf="feedItems && feedItems.length == 0 && !feedData"
+        >
+          <div class="card no-data tc p-3">
+            <div class="my-3">
+              <!-- <img lazyLoad="assets/img/noSearchFoundImg.png" /> -->
+              <img lazyLoad="assets/img/jobseeker/feed.png" />
+            </div>
+            <!-- <h5><b>Currently, there are no feeds</b></h5> -->
+            <h5><b>Currently, there is nothing in your feed</b></h5>
+          </div>
+        </div>
+      </div>
+  
+      <ng-template #projectCountExceeded>
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-11">
+                <h5>Project count exceeded</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="alert alert-danger">
+                  <p>
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i
+                    >&nbsp;&nbsp;Please upgrade your plan to publish more
+                    projects.
+                  </p>
+                </div>
+                <button class="fr btn btn-outline-danger" matDialogClose>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+  
+      <ng-template #maxPlanAndProjectCountExceeded>
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-11">
+                <h5>Project count exceeded</h5>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="alert alert-danger">
+                  <p>
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i
+                    >&nbsp;&nbsp; We see that you are on max plan but you have
+                    reached the maximum project add limit. <br />
+                    If you want to add more projects, please contact GradSiren
+                    customer support team for a customised plan
+                    <a [routerLink]="['/contact-us']" matDialogClose>here</a>.
+                  </p>
+                </div>
+                <button class="fr btn btn-outline-danger" matDialogClose>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  

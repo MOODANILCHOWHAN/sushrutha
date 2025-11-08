@@ -47,6 +47,7 @@ export class JobDetailsComponent implements OnInit{
       next:(res)=>{
         console.log(res);
         this.jobDetails=res;
+        this.getSuggestions(res.jobName)
       },error:(err)=>{
         console.log(err)
       }
@@ -59,6 +60,17 @@ export class JobDetailsComponent implements OnInit{
     if (emailRegex.test(link)) return 'email';
     if (mobileRegex.test(link)) return 'mobile';
     return 'url';
+  }
+
+  getSuggestions(name:string){
+    const api=`https://jobs-ut20.onrender.com/`;
+    this.http.get<any>(api).subscribe({
+      next:(res)=>{
+
+      },error:(err)=>{
+        console.log(err)
+      }
+    })
   }
   
 }

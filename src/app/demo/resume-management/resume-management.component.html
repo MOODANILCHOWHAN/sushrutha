@@ -1,0 +1,88 @@
+<div class="ResumeManagment ">
+    <div class="card">
+      <div class="card-header bg-white d-flex">
+        <h6 class="bold m-0 align-self-center">Manage Resumes</h6>
+        <button class="br-20 btn btn-primary btn-sm ml-auto px-3" (click)='uploadResume()'>Upload Resume</button>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isenableresumeData" class="d-flex flex-column justify-content-center align-items-center">
+          <img src="assets/img/doc.png">
+          <p>There are no resumes, upload now</p>
+        </div>
+        <div class="alert" *ngFor='let data of resumeData let i =index;' style="background-color: #e6effb;">
+          <div class=" card-mb-screen">
+            <div class="mr-2 mr-sm-0">
+              <p class="bold m-0 smallerFont resumeTitle cvtitle" title="{{data.resumeTitle}}">{{data.resumeTitle =='undefined'? '':  data.resumeTitle }}</p>
+              <p class="m-0 smallerFont text-gradprimary">{{data.lastUpdatedTime}}</p>
+            </div>
+            <div class="">
+              <span class="badge badge-primary" [ngClass]="{ 'pointer' : !data.isDefault }" (click)='changeMode(data.resumeId)'>{{data.isDefault == true ? 'Default':'Make as Default'}}</span>
+            </div>
+            <div class="">
+              <span class="res-icons" (click)='viewResume(data.resumeId)'>
+                <i class="fa fa-fw fa-eye" aria-hidden="true" tooltip="View resume" placement="top"></i>
+               </span>
+               <span class="res-icons" (click)='editResume(data.resumeId)'>
+                 <i class="fa fa-fw fa-pencil-square-o" aria-hidden="true" tooltip="Edit resume" placement="top"></i>
+               </span>
+               <span class="res-icons" (click)='downloadResume(data.resumeId)'>
+                 <i class="fa fa-fw fa-download" aria-hidden="true" tooltip="Download resume" placement="top"></i>
+               </span>
+               <span class="res-icons" (click)='openConfirmDialog(data.resumeId)' *ngIf="resumeData.length > 1">
+                <i class="fas fa-trash" aria-hidden="true" tooltip="Delete resume" placement="top"></i>
+               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- 
+      <mat-card class="d-none">
+        <div class="d-flex justify-content-between px-2">
+          <div>
+            <h1><b>Manage Your Resumes</b></h1>
+          </div>
+          <div>
+            <button class="btn btn-primary" (click)='uploadResume()'>Upload Resume</button>
+          </div>
+        </div>
+        <hr>
+        <div class="single-res" *ngFor='let data of resumeData let i =index;'>
+          <div class="d-flex justify-content-between px-2">
+            <div class="w-50">
+              <p><b>{{data.resumeTitle =='undefined'? '':  data.resumeTitle}}</b></p>
+            </div>
+            <div class="d-flex px-2 tl">
+              <span class="pr-5">{{data.lastUpdatedTime}}</span>
+              <span class="px-3">
+                <span class="badge badge-primary"><a (click)='changeMode(data.resumeId)'>{{data.isDefault == true ? 'Default':'Make as Default'}}</a></span>
+              </span>
+            </div>
+            <div class="d-flex justify-content-between pl-3">
+              <span class="res-icons" (click)='viewResume(data.resumeId)'>
+               <i class="fa fa-eye" aria-hidden="true"></i>
+              </span>
+              <span class="res-icons" (click)='editResume(data.resumeId)'>
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              </span>
+              <span class="res-icons" (click)='downloadResume(data.resumeId)'>
+                <i class="fa fa-download" aria-hidden="true"></i>
+              </span>
+              <span class="res-icons" (click)='deleteResume(data.resumeId)'>
+               <i class="fa fa-trash" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+        </div>      
+      </mat-card>
+       -->
+      <div class="">
+        <mat-card class="my-3 guidelines">
+            <p><b>A Quick Guide To Managing Your Resumes:</b></p>
+            <p class="smallerFont text-muted"><b>Default Resume:</b> This is the Resume that employers will see every time they search for a Resume.If you have multiple Resumes, you can designate a specific resume as your default resume by clicking the "Make as Default" button.</p>
+            <!-- <p><b>Private CV:</b> This CV is visible only to you. You can make a CV private (and vice versa) by clicking the lock icon.</p> -->
+            <p class="smallerFont text-muted"><b>Multiple Resumes:</b> You can have more than one Resume uploaded against your profile. These additional Resumes can be tailored to work best against specific job types , and consequently attract varied employers and job alerts for your expansive skill sets.</p>
+            <!-- <p><b>Profile CV:</b> This is a system generated CV and can not be deleted. It is the default CV used to apply for jobs when you have not added any of your own.</p> -->
+        </mat-card>
+      </div>
+  </div>

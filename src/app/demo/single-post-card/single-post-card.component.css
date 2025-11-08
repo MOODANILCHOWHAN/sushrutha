@@ -1,0 +1,214 @@
+@import '/src/assets/styles/partials';
+.single-post {
+    margin-bottom: 15px;
+    .card {
+        background-color: white;
+        border-radius: 10px;
+        .card-body {
+            padding: 0.8rem 1rem;
+
+        }
+        .shareLikeBg {
+            background-color: #f9f9f9;
+            p {
+                font-size: 13px;
+            }
+            span {
+                font-weight: 500;
+            }
+        }
+        .card-actions {
+            font-size: 14px;
+            border-top: solid 1px #dedede;
+        }
+        .comment-rply {
+            small {
+                // font-size: 85% !important;
+                width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+            }
+        }
+        .fa-thumbs-up {
+            color: #209948;
+        }
+        .avatarImgDiv {
+           img {
+            min-width: 40px;
+            height: 40px;
+            margin-right: 0px;
+           }
+        }
+        .commentPara {
+            font-size: 15px;
+            white-space:pre-wrap;
+        }
+        h5 {
+            font-weight: 600 !important;
+        }
+        .btn-lightBlue {
+            background-color: #e6f0f9;
+            color: #566c7a;
+            border-color: #e6f0f9;
+            &:hover {
+                color: #212529;
+                background-color: #e2e6ea;
+                border-color: #dae0e5;
+            }
+        }
+        .fa-ellipsis-h {
+            color: #8c8c8c;
+            font-size: 20px;
+        }
+        .btn, .btn-primary {
+            border-radius: 20px !important;
+        }
+
+
+        input.border.form-control.rounded-pill.border_radius_50rem {
+            // display: inline-block;
+            // width: 82%;
+            // margin-right: 2%;
+            // border-radius: 30px !important;
+            display: inline-block;
+            width: 82%;
+            height: 36px;
+            font-size: 14px;
+            margin-right: 2%;
+            border-radius: 20px!important;
+        }
+        
+        .align-self-center.w_91per {
+            width: calc(100% - 50px);
+            // display: flex;
+            display: inline-block;
+            flex-wrap: wrap;
+            >input{
+                width: calc(100% - 62px) !important;
+            }
+
+            @media(max-width: 480px) {
+                width: calc(100% - 70px);
+            }
+        }
+        
+        button.send-comment {
+            display: inline-block;
+            vertical-align: top;
+        }
+
+
+    }
+    .post-reactions {
+        background-color: #f2f2f2;
+        border-radius: 0 0 10px 10px;
+        i {
+            font-size: 14px !important;
+            font-weight: 500;
+        }
+        span {
+            font-size: 14px !important;
+        }
+    }
+    small {
+        // font-size: 95% !important;
+        width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+    }
+    p {
+        font-size: 14px !important;
+    }
+    .comm-reply {
+        background-color: #efefef;
+        padding: 5px 10px;
+        border-radius: 0 10px 10px 10px;
+    }
+    .btn-link {
+        font-size: 14px !important;
+    }
+    .contentBox{
+        padding: 0.5rem !important;
+        margin: 5px;
+        overflow: auto;
+    }
+}
+
+.post-act-thmb {
+    width: 70px;
+    height: 85px;
+    @include mQ(400px){
+        width: 50px;
+        height: auto;
+    }
+}
+::ng-deep .contentBox table td {
+    border: 1px solid #000;
+
+}
+
+::ng-deep .img-dialog {
+    text-align: center;
+    background-color: #212529;
+    height: 75vh;
+}
+
+::ng-deep .img-dialog img {
+    height: inherit;
+}
+
+::ng-deep .carousel-control-next-icon, ::ng-deep.carousel-control-prev-icon {
+    background-color: midnightblue;
+    border-radius: 25%;
+}
+
+::ng-deep .carousel-img{
+    height: 100vh
+}
+
+// .jsgroupheadline{
+//     width: 450px !important;
+//     display: block;  
+// }
+
+.commentprofiletitle{
+    width: 450px !important;
+    display: block;
+}
+
+@media only screen and (max-width: 600px) {
+    // .jsgroupheadline{
+    //     width: auto !important;
+    // }
+  }
+
+.popup1{
+    min-height: 325px !important;
+}
+
+  .commentArea {
+    display: inline-block;
+    width: 80%;
+    font-size: 14px;
+    margin-right: 2%;
+    border-radius: 15px!important;
+    overflow: hidden;
+}
+.comment-rply {
+    overflow-x: hidden;
+}
+::ng-deep .mention{
+    padding: 0 !important;
+}
+
+::ng-deep .likeModal{
+    width: 460px !important;
+    width: 96% !important;
+}
+.hashtagstyle{
+    color: #034C9A;
+}
